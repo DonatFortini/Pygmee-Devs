@@ -36,7 +36,7 @@ J'ai choisis Tauri car ayant précedement travailler avec Electron-Js j'ai été
 
 ## Python -> bibloteque pyo3 de Rust
 
-<img src="../src/assets/python.svg" width="500" height="250">
+<img src="../../src/assets/python.svg" width="500" height="250">
 
 * https://github.com/PyO3/pyo3
 
