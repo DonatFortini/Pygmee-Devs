@@ -1,0 +1,66 @@
+button{
+  background-color:#DBC2CF;
+}
+
+.input {
+  height: 5rem;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.export {
+  height: 5rem;
+}
+
+.header {
+  height: 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: solid white 2px;
+  background-color: #1B3542;
+}
+
+.logo{
+  width: 5.5rem;
+}
+
+.codeDisplay{
+  height: 70%;
+  width: 25%;
+  background-color: #9FA2B2;
+}
+
+.modelDisplay{
+  height: 70%;
+  width: 60%;
+  background-color:#9FA2B2;
+}
+
+.column{
+  width: 10%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  border-right: solid white 2px;
+  background-color:#1B3542;
+}
+
+.main{
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.display{
+  flex: 1 1 auto;
+  display: flex;
+  background-color: #2E4756;
+  justify-content: space-evenly;
+  justify-items: center;
+  align-items: center;
+}

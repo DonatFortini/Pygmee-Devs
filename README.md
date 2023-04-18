@@ -1,6 +1,6 @@
 # Pygmee
 
-<p align="center"><img src="./src/resources/logo_gorfou.svg" width="250" height="250"></p>
+<p align="center"><img src="./src/resources/logo_pygmee.svg" width="250" height="250"></p>
 
 Le but du projet est de créer une application simplifiant la simulation , de lui donner un aspect graphique et textuel pour simplifier la tache a toute personne voulant s'exercer .
 
@@ -8,7 +8,7 @@ Le but du projet est de créer une application simplifiant la simulation , de lu
 
 Permet de faciliter la simulation. L’utilisateur peut importer ou creer des modele puis il peut les modifier et visualiser en fonction de divers paramètres.
 
-La principale caracteristique de l'app est sa capacité a utilise le DNL (langage naturel) pour generer des modeles et des parametre les concernant.
+La principale caracteristique de l'app est sa capacité a utilise le NLP (langage naturel) pour generer des modeles et des parametre les concernant.
 
 Permet à la fin de générer un fichier yaml.
 
