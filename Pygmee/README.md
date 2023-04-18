@@ -1,6 +1,6 @@
 # Pygmee
 
-<p align="center"><img src="./src/assets/logo_pygmee.png" width="250" height="250"></p>
+<p align="center"><img src="./src/assets/logo_pygmee.png" width="500" height="250"></p>
 
 Le but du projet est de créer une application simplifiant la simulation , de lui donner un aspect graphique et textuel pour simplifier la tache a toute personne voulant s'exercer .
 
