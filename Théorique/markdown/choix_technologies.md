@@ -2,7 +2,7 @@
 
 ## React  
 
-<img src="../../src/assets/react.svg" width="200" height="200">
+<img src="../../src/assets/React-icon.svg" width="200" height="200">
 
 * https://fr.reactjs.org/
 
