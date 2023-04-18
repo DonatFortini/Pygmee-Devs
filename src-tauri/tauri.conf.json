@@ -21,9 +21,9 @@
     "bundle": {
       "active": true,
       "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
+        "icons/pygmee32x32.png",
+        "icons/pygmee128x128.png",
+        "icons/pygmee232x232.png",
         "icons/icon.icns",
         "icons/icon.ico"
       ],
@@ -41,8 +41,10 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Pygmee",
-        "width": 800,
-        "height": 600
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600
       }
     ]
   }

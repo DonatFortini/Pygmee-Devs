@@ -1,7 +1,7 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
-import "./App.css";
+import "./public/App.css";
 
 function Input(props:{}) {
   return (
@@ -12,9 +12,9 @@ function Input(props:{}) {
 function Menu() {
   return (
     <div className="menu">
-      <button>Button 1</button>
-      <button>Button 2</button>
-      <button>Button 3</button>
+      <button>nouvelle simulation</button>
+      <button>creer une librairie</button>
+      <button>importer une simulation</button>
     </div>
   );
 }
@@ -26,13 +26,24 @@ function ExportButton() {
 }
 
 function Header() {
+
+  async function test() {
+    try{
+      await invoke('test');
+      console.log('cote js done');
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
+
   return (
     <div className="header">
       <img className='logo' src="./src/assets/logo_pygmee.png" alt="" />
-      <h1>Title</h1>
+      <h1>Pygmee-DEVS</h1>
       <div style={{display: 'flex', justifyContent:"space-evenly"}}>
-        <button>Button 1</button>
-        <button>Button 2</button>
+        <button>Sauvegarder</button>
+        <button onClick={test} >Importer</button>
       </div>
     </div>
   );
@@ -40,13 +51,13 @@ function Header() {
 
 function CodeDisplay() {
   return (
-    <div className="codeDisplay">Code display</div>
+    <div className="codeDisplay"></div>
   );
 }
 
 function ModelDisplay() {
   return (
-    <div className="modelDisplay">Drawings display</div>
+    <div className="modelDisplay"></div>
   );
 }
 
