@@ -2,7 +2,7 @@
 
 ## React  
 
-<img src="./src/assets/react.svg" width="500" height="250">
+<img src="../../src/assets/react.svg" width="200" height="200">
 
 * https://fr.reactjs.org/
 
@@ -10,12 +10,12 @@ J'ai choisis React car je voulais m'exercer et apprendre un framework font-end q
 
 ## Vite 
 
-<img src="./src/assets/vite.svg" width="500" height="250">
+<img src="../../src/assets/vite.svg" width="200" height="200">
 
 * https://vitejs.dev/
 ##  Joint-js
 
-<img src="./src/assets/jointjs.jpg" width="500" height="250">
+<img src="../../src/assets/jointjs.jpg" width="200" height="200">
 
 * https://www.jointjs.com/
 
@@ -28,7 +28,7 @@ J'utilise cette biblioteque pour le coté illustatration de l'app , elle ma ét�
 
 ## Tauri
 
-<img src="./src/assets/tauri.svg" width="500" height="250">
+<img src="../../src/assets/tauri.svg" width="200" height="200">
 
 * https://tauri.app/
 
@@ -36,7 +36,7 @@ J'ai choisis Tauri car ayant précedement travailler avec Electron-Js j'ai été
 
 ## Python -> bibloteque pyo3 de Rust
 
-<img src="../../src/assets/python.svg" width="500" height="250">
+<img src="../../src/assets/python.svg" width="200" height="200">
 
 * https://github.com/PyO3/pyo3
 
