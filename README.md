@@ -25,10 +25,6 @@ https://www.figma.com/file/nWCcV2KAqVB1jRD2HQf7bp/pygmee?t=DFdNpP9iYdhuLzfG-0
 
 ## Instruction d'installation
 
-## Technologies utilisées
-
-pour plus de précision : [choix des technologies](https://github.com/DonatFortini/Gorfou/blob/main/Th%C3%A9orique/markdown/choix_technologies.md)
-
 ## Instruction d'utilisation
 
 ## Comment contribuer ou report une erreur
