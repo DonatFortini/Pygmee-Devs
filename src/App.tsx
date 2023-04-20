@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
+import { InvokeArgs, invoke } from "@tauri-apps/api/tauri";
+import { confirm } from '@tauri-apps/api/dialog';
+import { open } from '@tauri-apps/api/dialog';
 import "./public/App.css";
+
+
 
 function Input() {
   const handleKeyPress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -12,7 +16,7 @@ function Input() {
   };
 
   return (
-    <input className="input" onKeyPress={handleKeyPress} />
+    <input className="input" onKeyDown={handleKeyPress} />
   );
 }
 function Menu() {
@@ -26,31 +30,40 @@ function Menu() {
 }
 
 function ExportButton() {
+
+  async function finish() {
+    let conf = await confirm('êtes-vous sûr de vouloir finir', 'Exporter');
+    if (conf) {
+      console.log("true");
+    }
+  }
+
   return (
-    <button className="export" >Exporter</button>
+    <button onClick={finish} className="export" >Exporter</button>
   );
 }
 
 function Header() {
 
-  async function test() {
-    try{
-      console.log('clicked');
-      await invoke('test');
-      console.log('cote js done');
+  async function import_sim() {
+    let file = await open({
+      multiple: true
+    });
+    if (file != null) {
+      if(Array.isArray(file)){
+        invoke('copy_files',{ files: file }); 
+      }
     }
-    catch(error){
-      console.error(error);
-    }
-  }
+}
+
 
   return (
     <div className="header">
       <img className='logo' src="./src/assets/logo_pygmee.png" alt="" />
       <h1>Pygmee-DEVS</h1>
-      <div style={{display: 'flex', justifyContent:"space-evenly"}}>
+      <div style={{ display: 'flex', justifyContent: "space-evenly" }}>
         <button>Sauvegarder</button>
-        <button onClick={test} >Importer</button>
+        <button onClick={import_sim} >Importer</button>
       </div>
     </div>
   );

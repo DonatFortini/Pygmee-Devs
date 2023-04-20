@@ -4,8 +4,7 @@
 use pyo3::prelude::*;
 use serde::{Serialize, Serializer};
 use tauri::command::private::ResultKind;
-
-
+use std::path::Path;
 /*
 gestion des erreur python
  */
@@ -60,11 +59,39 @@ fn get_text(input: String) -> Result<(), MyError> {
     })
 }
 
+/*fonction de copy des fichier je l'appelle pour copier les fichiers recuperés par le bouton import du coté front
+pour les avoir dans mon dossier simulation pour que l'utilisateur puisse se créer une biblioteque*/
+#[tauri::command]
+fn copy_files(files: Vec<String>) {
+    let simulation_dir = std::env::current_dir().unwrap().join("simulation");
+    println!("Simulation directory: {:?}", simulation_dir);
+
+    for file in files {
+        let src_path = Path::new(&file);
+        if src_path.exists() {
+            let file_name = src_path.file_name().unwrap();
+            let dest_path = simulation_dir.join(file_name);
+            println!("Destination path: {:?}", dest_path);
+
+            match std::fs::read(&src_path) {
+                Ok(contents) => {
+                    match std::fs::write(&dest_path, &contents) {
+                        Ok(_) => println!("Copied file {} to {}", file, dest_path.display()),
+                        Err(e) => println!("Error copying file {}: {:?}", file, e),
+                    }
+                },
+                Err(e) => println!("Error reading file {}: {:?}", file, e),
+            }
+        } else {
+            println!("File not found: {}", file);
+        }
+    }
+}
 
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![test,get_text])//gestion de l'invoke
+        .invoke_handler(tauri::generate_handler![test,get_text,copy_files])//gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
