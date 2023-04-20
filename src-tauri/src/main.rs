@@ -5,6 +5,7 @@ use pyo3::prelude::*;
 use serde::{Serialize, Serializer};
 use tauri::command::private::ResultKind;
 
+
 /*
 gestion des erreur python
  */
@@ -44,9 +45,26 @@ fn test() -> Result<(), MyError> {
     })
 }
 
+#[tauri::command]
+fn get_text(input: String) -> Result<(), MyError> {
+    /* on spécifie le path du package python (initialisé avec un __init__.py)
+    utilisé pour stocké les fonction python que l'on va utilisé  */
+    std::env::set_var("PYTHONPATH", "./python");
+
+    Python::with_gil(|py| {
+        let module = py.import("traitement")?;//import du module
+        let function = module.getattr("use_text")?;//import de la fonction
+        let args :(String,) = (input,); // convert the input String to a tuple of Py objects
+        let _result = function.call1(args)?;//call de la fonction avec 0 parametres
+        Ok(())
+    })
+}
+
+
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![test])//gestion de l'invoke
+        .invoke_handler(tauri::generate_handler![test,get_text])//gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

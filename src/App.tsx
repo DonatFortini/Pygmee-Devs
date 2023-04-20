@@ -1,14 +1,20 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./public/App.css";
 
-function Input(props:{}) {
+function Input() {
+  const handleKeyPress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const inputValue = e.currentTarget.value;
+      await invoke("get_text", { input: inputValue });
+      e.currentTarget.value = "";
+    }
+  };
+
   return (
-    <input className="input" {...props} />
+    <input className="input" onKeyPress={handleKeyPress} />
   );
 }
-
 function Menu() {
   return (
     <div className="menu">
