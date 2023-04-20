@@ -29,6 +29,7 @@ function Header() {
 
   async function test() {
     try{
+      console.log('clicked');
       await invoke('test');
       console.log('cote js done');
     }

@@ -2,23 +2,51 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use pyo3::prelude::*;
+use serde::{Serialize, Serializer};
+use tauri::command::private::ResultKind;
+
+/*
+gestion des erreur python
+ */
+#[derive(Debug)]
+struct MyError(String);
+
+impl From<PyErr> for MyError {
+    fn from(error: PyErr) -> Self {
+        MyError(format!("{:?}", error))
+    }
+}
+
+impl ResultKind for MyError {}
+
+impl Serialize for MyError {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&self.0)
+    }
+}
+
+/**/
 
 #[tauri::command]
-fn test() -> Result<(), String> {
-    Python::with_gil::<_, Result<(), PyErr>>(|py| {
-        let module = PyModule::import(py, "test").map_err(PyErr::from)?;
-        let function = module.getattr("test").map_err(PyErr::from)?.into_py(py);
-        function.call(py, (), None).map_err(PyErr::from)?;
+fn test() -> Result<(), MyError> {
+    /* on spécifie le path du package python (initialisé avec un __init__.py)
+    utilisé pour stocké les fonction python que l'on va utilisé  */
+    std::env::set_var("PYTHONPATH", "./python");
+
+    Python::with_gil(|py| {
+        let module = py.import("test")?;//import du module
+        let function = module.getattr("test")?;//import de la fonction
+        let _result = function.call0()?;//call de la fonction avec 0 parametres
         Ok(())
     })
-    .map_err(|e| e.to_string())
-    .map_err(|e| Into::<Box<dyn std::error::Error>>::into(e))
-    .map_err(|e| e.to_string())
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![test])
+        .invoke_handler(tauri::generate_handler![test])//gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
