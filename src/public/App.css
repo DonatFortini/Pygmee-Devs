@@ -3,7 +3,7 @@ button{
 }
 
 .input {
-  height: 5rem;
+  border: solid black 2px;
 }
 
 .menu {

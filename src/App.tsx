@@ -1,30 +1,41 @@
-import { useState } from "react";
-import { InvokeArgs, invoke } from "@tauri-apps/api/tauri";
-import { confirm } from '@tauri-apps/api/dialog';
-import { open } from '@tauri-apps/api/dialog';
+import { useState, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/tauri";
+import { confirm, open } from '@tauri-apps/api/dialog';
 import "./public/App.css";
-
+import { debounce } from 'lodash';
 
 
 function Input() {
-  const handleKeyPress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       const inputValue = e.currentTarget.value;
       await invoke("get_text", { input: inputValue });
-      e.currentTarget.value = "";
+      if (e.currentTarget) {
+        e.currentTarget.value = "";
+      }
     }
   };
 
+
   return (
-    <input className="input" onKeyDown={handleKeyPress} />
+    <textarea  className="input" onKeyDown={handleKeyPress} autoFocus/>
   );
 }
+
+
 function Menu() {
+
+  async function load_fichier() {
+    await open({
+      defaultPath: "./simulation"
+    });
+  }
+
   return (
     <div className="menu">
       <button>nouvelle simulation</button>
       <button>creer une librairie</button>
-      <button>importer une simulation</button>
+      <button onClick={load_fichier}>ouvrir une simulation</button>
     </div>
   );
 }
@@ -50,11 +61,11 @@ function Header() {
       multiple: true
     });
     if (file != null) {
-      if(Array.isArray(file)){
-        invoke('copy_files',{ files: file }); 
+      if (Array.isArray(file)) {
+        invoke('copy_files', { files: file });
       }
     }
-}
+  }
 
 
   return (
@@ -84,7 +95,6 @@ function ModelDisplay() {
 function Column() {
   return (
     <div className="column">
-      <Input />
       <Menu />
       <ExportButton />
     </div>
@@ -92,13 +102,36 @@ function Column() {
 }
 
 function MainScreen() {
+  const [showInput, setShowInput] = useState(false);
+
+  const toggleInput = () => {
+    setShowInput(!showInput);
+  };
+
+  const debouncedToggleInput = debounce(toggleInput, 100);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "²") {
+        debouncedToggleInput();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [debouncedToggleInput]);
+
   return (
     <div className="main">
       <Header />
       <div className="display">
         <CodeDisplay />
-        <ModelDisplay />
+        <ModelDisplay />  
       </div>
+      {showInput && <Input />}
     </div>
   );
 }
