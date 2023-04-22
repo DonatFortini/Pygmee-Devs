@@ -3,8 +3,8 @@
 
 use pyo3::prelude::*;
 use serde::{Serialize, Serializer};
-use tauri::command::private::ResultKind;
 use std::path::Path;
+use tauri::command::private::ResultKind;
 /*
 gestion des erreur python
  */
@@ -37,9 +37,9 @@ fn test() -> Result<(), MyError> {
     std::env::set_var("PYTHONPATH", "./python");
 
     Python::with_gil(|py| {
-        let module = py.import("test")?;//import du module
-        let function = module.getattr("test")?;//import de la fonction
-        let _result = function.call0()?;//call de la fonction avec 0 parametres
+        let module = py.import("test")?; //import du module
+        let function = module.getattr("test")?; //import de la fonction
+        let _result = function.call0()?; //call de la fonction avec 0 parametres
         Ok(())
     })
 }
@@ -51,10 +51,10 @@ fn get_text(input: String) -> Result<(), MyError> {
     std::env::set_var("PYTHONPATH", "./python");
 
     Python::with_gil(|py| {
-        let module = py.import("traitement")?;//import du module
-        let function = module.getattr("use_text")?;//import de la fonction
-        let args :(String,) = (input,); // convert the input String to a tuple of Py objects
-        let _result = function.call1(args)?;//call de la fonction avec 0 parametres
+        let module = py.import("traitement")?; //import du module
+        let function = module.getattr("use_text")?; //import de la fonction
+        let args: (String,) = (input,); //converti en tuple python
+        let _result = function.call1(args)?; //call de la fonction avec 0 parametres
         Ok(())
     })
 }
@@ -74,11 +74,9 @@ fn copy_files(files: Vec<String>) {
             println!("Destination path: {:?}", dest_path);
 
             match std::fs::read(&src_path) {
-                Ok(contents) => {
-                    match std::fs::write(&dest_path, &contents) {
-                        Ok(_) => println!("Copied file {} to {}", file, dest_path.display()),
-                        Err(e) => println!("Error copying file {}: {:?}", file, e),
-                    }
+                Ok(contents) => match std::fs::write(&dest_path, &contents) {
+                    Ok(_) => println!("Copied file {} to {}", file, dest_path.display()),
+                    Err(e) => println!("Error copying file {}: {:?}", file, e),
                 },
                 Err(e) => println!("Error reading file {}: {:?}", file, e),
             }
@@ -88,10 +86,25 @@ fn copy_files(files: Vec<String>) {
     }
 }
 
+#[tauri::command]
+fn format_code(filepath: String) -> Result<String, MyError> {
+    /* on spécifie le path du package python (initialisé avec un __init__.py)
+    utilisé pour stocké les fonction python que l'on va utilisé  */
+    std::env::set_var("PYTHONPATH", "./python");
+
+    Python::with_gil(|py| {
+        let module = py.import("codegen")?; //import du module
+        let function = module.getattr("formater")?; //import de la fonction
+        let args: (String,) = (filepath,); //converti en tuple python
+        let result = function.call1(args)?; //call de la fonction avec 0 parametres
+        Ok(result.extract()?) // recupere le resultat de la requete et le retourne
+    })
+}
+
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![test,get_text,copy_files])//gestion de l'invoke
+        .invoke_handler(tauri::generate_handler![test, get_text, copy_files,format_code]) //gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

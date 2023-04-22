@@ -18,17 +18,32 @@ function Input() {
 
 
   return (
-    <textarea  className="input" onKeyDown={handleKeyPress} autoFocus/>
+    <textarea className="input" onKeyDown={handleKeyPress} autoFocus />
   );
 }
 
 
 function Menu() {
+  async function updateCodeDisplay(filepath:string) {
+    try {
+      const result: string = await invoke('format_code', { filepath });
+      const codeDisplay = document.getElementById("codeDisplay") ;
+      codeDisplay!.innerHTML = result;
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   async function load_fichier() {
-    await open({
-      defaultPath: "./simulation"
+    let select = await open({
+      defaultPath: "./simulation",
+      multiple: false,
     });
+    if (select) {
+      let choice:string=String(select);
+      updateCodeDisplay(choice);
+    }
   }
 
   return (
@@ -82,7 +97,7 @@ function Header() {
 
 function CodeDisplay() {
   return (
-    <div className="codeDisplay"></div>
+    <div id="codeDisplay" className="codeDisplay" ></div>
   );
 }
 
@@ -129,7 +144,7 @@ function MainScreen() {
       <Header />
       <div className="display">
         <CodeDisplay />
-        <ModelDisplay />  
+        <ModelDisplay />
       </div>
       {showInput && <Input />}
     </div>

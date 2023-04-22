@@ -32,6 +32,9 @@ button{
   height: 70%;
   width: 25%;
   background-color: #9FA2B2;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  overflow-y: scroll;
+  font-size: 12px;
 }
 
 .modelDisplay{
