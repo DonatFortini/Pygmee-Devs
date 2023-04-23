@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { confirm, open } from '@tauri-apps/api/dialog';
 import "./public/App.css";
-import { debounce } from 'lodash';
+import { debounce, size } from 'lodash';
+import { parseCodeToGraph } from "./graph/graphGenerator";
+import * as joint from 'jointjs';
+import { readTextFile } from '@tauri-apps/api/fs';
 
 
 function Input() {
@@ -24,15 +27,32 @@ function Input() {
 
 
 function Menu() {
-  async function updateCodeDisplay(filepath:string) {
+  async function updateCodeDisplay(filepath: string) {
     try {
       const result: string = await invoke('format_code', { filepath });
-      const codeDisplay = document.getElementById("codeDisplay") ;
+      const codeDisplay = document.getElementById("codeDisplay");
       codeDisplay!.innerHTML = result;
 
     } catch (error) {
       console.error(error);
     }
+  }
+
+  async function updateModelDisplay(filepath: string) {
+    readTextFile(filepath)
+      .then(data => {
+        let graph = parseCodeToGraph(data);
+        new joint.dia.Paper({
+          el: document.getElementById("modelDisplay"),
+          model: graph,
+          height: '70%',
+          width: '60%'
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+
   }
 
   async function load_fichier() {
@@ -41,8 +61,9 @@ function Menu() {
       multiple: false,
     });
     if (select) {
-      let choice:string=String(select);
+      let choice: string = String(select);
       updateCodeDisplay(choice);
+      updateModelDisplay(choice);
     }
   }
 
@@ -103,7 +124,7 @@ function CodeDisplay() {
 
 function ModelDisplay() {
   return (
-    <div className="modelDisplay"></div>
+    <div id="modelDisplay" className="modelDisplay" ></div>
   );
 }
 

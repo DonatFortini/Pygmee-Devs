@@ -1,7 +1,7 @@
 import re
 
 motcle = {
-    "darkmagenta": ["to", "accepts", "input", "on", "generates", "output", "start", "hold",
+    "darkmagenta": ["to", "accepts", "input", "on", "generates", "output", "start,", "hold",
              "in", "for", "time", "after", "from", "go", "passivate", "when", "and",
              "receive", "the", "perspective", "is", "made", "of", "sends"]
 }
