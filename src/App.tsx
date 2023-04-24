@@ -9,6 +9,12 @@ import { readTextFile } from '@tauri-apps/api/fs';
 
 
 function Input() {
+  /**
+   * attend que l'utilisateur appuie sur entrée pour envoyer le texte vers le back-end
+   * pour qu'il soit analysé
+   * 
+   * @param e la touche entrée du clavier
+   */
   const handleKeyPress = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       const inputValue = e.currentTarget.value;
@@ -27,6 +33,12 @@ function Input() {
 
 
 function Menu() {
+  /**
+   * appele une fonction du back-end qui format le code du fichier selectioné le renvoi sous forme 
+   * html et le display dans div codeDisplay
+   * 
+   * @param filepath chemin du fichier selectioné dans la fenêtre de dialogue
+   */
   async function updateCodeDisplay(filepath: string) {
     try {
       const result: string = await invoke('format_code', { filepath });
@@ -38,6 +50,12 @@ function Menu() {
     }
   }
 
+  /**
+   * appele une fonction du front-end qui parse le code du fichier selectioné le renvoi sous forme 
+   * de diagramme html et le display dans div modelDisplay
+   * 
+   *@param filepath chemin du fichier selectioné dans la fenêtre de dialogue 
+   */
   async function updateModelDisplay(filepath: string) {
     readTextFile(filepath)
       .then(data => {
@@ -55,6 +73,10 @@ function Menu() {
 
   }
 
+  /**
+   * ouvre une fenêtre de dialogue qui permet de selectioner un fichier pour le charger
+   * dans l'editeur (code et model Display)
+   */
   async function load_fichier() {
     let select = await open({
       defaultPath: "./simulation",
@@ -77,7 +99,9 @@ function Menu() {
 }
 
 function ExportButton() {
-
+  /**
+   * enregistre le ficgier final dnas le dossier téléchargements
+   */
   async function finish() {
     let conf = await confirm('êtes-vous sûr de vouloir finir', 'Exporter');
     if (conf) {
@@ -91,7 +115,10 @@ function ExportButton() {
 }
 
 function Header() {
-
+  /**
+   * ouvre une fenêtre de dialogue qui permet de selectioner un fichier pour le copier
+   * dans le dossier simulation de l'appli pour l'avoir a disposition
+   */
   async function import_sim() {
     let file = await open({
       multiple: true
@@ -146,7 +173,7 @@ function MainScreen() {
 
   const debouncedToggleInput = debounce(toggleInput, 100);
 
-  useEffect(() => {
+  useEffect(() => {//lorsque ² est pressé l'input apparais 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "²") {
         debouncedToggleInput();

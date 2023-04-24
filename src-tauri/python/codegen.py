@@ -2,12 +2,14 @@ import re
 
 motcle = {
     "darkmagenta": ["to", "accepts", "input", "on", "generates", "output", "start,", "hold",
-             "in", "for", "time", "after", "from", "go", "passivate", "when", "and",
-             "receive", "the", "perspective", "is", "made", "of", "sends"]
+                    "in", "for", "time", "after", "from", "go", "passivate", "when", "and",
+                    "receive", "the", "perspective", "is", "made", "of", "sends"]
 }
 
 
 def formater(filename: str) -> str:
+    """la fonction ouvre le fichier lit son contenu et colore le code en fonction 
+    des mot clé fournis au préalable"""
     with open(filename, 'r') as file:
         content = file.read()
 
@@ -25,11 +27,13 @@ def formater(filename: str) -> str:
         for word in words:
             for color, value in motcle.items():
                 if word.lower() in value:
-                    html_words.append(f'<span style="color: {color};">{word}</span>')
+                    html_words.append(
+                        f'<span style="color: {color};">{word}</span>')
                     break
             else:
                 if word.isdigit():
-                    html_words.append(f'<span style="color:green;">{word}</span>')
+                    html_words.append(
+                        f'<span style="color:green;">{word}</span>')
                 else:
                     html_words.append(word)
         html_sentence = ' '.join(html_words) + end_punct
