@@ -1,4 +1,3 @@
-import { join } from 'path';
 import { module_factory, link_factory } from './graph';
 import * as joint from 'jointjs';
 
@@ -105,7 +104,8 @@ function parseCodeToGraph(code: string): joint.dia.Graph {
         else{
             label="!"+iter.name
         }
-
+       
+        
         const m = link_factory(module1, module2, label);
         graph.addCell(m);
     }
