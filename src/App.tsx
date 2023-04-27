@@ -1,35 +1,9 @@
-import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { confirm, open } from '@tauri-apps/api/dialog';
 import "./public/App.css";
-import { debounce, size } from 'lodash';
 import { parseCodeToGraph } from "./graph/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
-
-
-function Input() {
-  /**
-   * attend que l'utilisateur appuie sur entrée pour envoyer le texte vers le back-end
-   * pour qu'il soit analysé
-   * 
-   * @param e la touche entrée du clavier
-   */
-  const handleKeyPress = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter") {
-      const inputValue = e.currentTarget.value;
-      await invoke("get_text", { input: inputValue });
-      if (e.currentTarget) {
-        e.currentTarget.value = "";
-      }
-    }
-  };
-
-
-  return (
-    <textarea className="input" onKeyDown={handleKeyPress} autoFocus />
-  );
-}
 
 
 function Menu() {
@@ -91,9 +65,9 @@ function Menu() {
 
   return (
     <div className="menu">
-      <button>nouvelle simulation</button>
+      <button>nouveau modèle</button>
       <button>creer une librairie</button>
-      <button onClick={load_fichier}>ouvrir une simulation</button>
+      <button onClick={load_fichier}>ouvrir un modèle atomique</button>
     </div>
   );
 }
@@ -165,27 +139,7 @@ function Column() {
 }
 
 function MainScreen() {
-  const [showInput, setShowInput] = useState(false);
-
-  const toggleInput = () => {
-    setShowInput(!showInput);
-  };
-
-  const debouncedToggleInput = debounce(toggleInput, 100);
-
-  useEffect(() => {//lorsque ² est pressé l'input apparais 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "²") {
-        debouncedToggleInput();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [debouncedToggleInput]);
+  
 
   return (
     <div className="main">
@@ -194,7 +148,6 @@ function MainScreen() {
         <CodeDisplay />
         <ModelDisplay />
       </div>
-      {showInput && <Input />}
     </div>
   );
 }

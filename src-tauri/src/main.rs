@@ -30,34 +30,6 @@ impl Serialize for MyError {
 
 /**/
 
-#[tauri::command]
-fn test() -> Result<(), MyError> {
-    /* on spécifie le path du package python (initialisé avec un __init__.py)
-    utilisé pour stocké les fonction python que l'on va utilisé  */
-    std::env::set_var("PYTHONPATH", "./python");
-
-    Python::with_gil(|py| {
-        let module = py.import("test")?; //import du module
-        let function = module.getattr("test")?; //import de la fonction
-        let _result = function.call0()?; //call de la fonction avec 0 parametres
-        Ok(())
-    })
-}
-
-#[tauri::command]
-fn get_text(input: String) -> Result<(), MyError> {
-    /* on spécifie le path du package python (initialisé avec un __init__.py)
-    utilisé pour stocké les fonction python que l'on va utilisé  */
-    std::env::set_var("PYTHONPATH", "./python");
-
-    Python::with_gil(|py| {
-        let module = py.import("traitement")?; //import du module
-        let function = module.getattr("use_text")?; //import de la fonction
-        let args: (String,) = (input,); //converti en tuple python
-        let _result = function.call1(args)?; //call de la fonction avec 0 parametres
-        Ok(())
-    })
-}
 
 /*fonction de copy des fichier je l'appelle pour copier les fichiers recuperés par le bouton import du coté front
 pour les avoir dans mon dossier simulation pour que l'utilisateur puisse se créer une biblioteque*/
@@ -104,7 +76,7 @@ fn format_code(filepath: String) -> Result<String, MyError> {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![test, get_text, copy_files,format_code]) //gestion de l'invoke
+        .invoke_handler(tauri::generate_handler![copy_files,format_code]) //gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
