@@ -37,10 +37,25 @@ button{
   font-size: 12px;
 }
 
-.modelDisplay{
+.model-container{
   height: 70%;
   width: 60%;
+  display: flex;
+  flex-direction: column;
+}
+
+.modelDisplay{
+  height: 95%;
+  width:100%;
   background-color:#9FA2B2;
+}
+
+.toolbar{
+  display: flex;
+  justify-content: right;
+  height: 5%;
+  background-color:#9FA2B2;
+  border: solid 2px gray;
 }
 
 .column{

@@ -5,6 +5,22 @@ import { parseCodeToGraph } from "./graph/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
 
+/**
+ * 
+ * creer une barre d'outil comportant plusieurs bouton
+ * qui interagissent avec le graphique
+ */
+function Toolbar(){
+  return(
+    <div className="toolbar">
+      <button>r</button>
+      <button>e</button>
+      <button>z</button>
+      <button>a</button>
+    </div>
+  );
+}
+
 
 function Menu() {
   /**
@@ -37,8 +53,8 @@ function Menu() {
         new joint.dia.Paper({
           el: document.getElementById("modelDisplay"),
           model: graph,
-          height: '70%',
-          width: '60%'
+          height: '100%',
+          width: '100%'
         });
       })
       .catch(error => {
@@ -124,7 +140,11 @@ function CodeDisplay() {
 
 function ModelDisplay() {
   return (
-    <div id="modelDisplay" className="modelDisplay" ></div>
+    <div className="model-container">
+      <div id="modelDisplay" className="modelDisplay" ></div>
+      <Toolbar/>
+    </div>
+    
   );
 }
 
