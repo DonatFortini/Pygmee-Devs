@@ -34,15 +34,10 @@ function module_factory(name: string, time = Infinity, pos = { x: 0, y: 0 }): jo
  * @param labelText Le texte à afficher sur le lien.
  * @returns Un objet `joint.dia.Link` représentant le lien.
  */
-function link_factory(rect1: joint.shapes.basic.Rect, rect2: joint.shapes.basic.Rect, labelText: string): joint.dia.Link {
-    var link = new joint.dia.Link({
+function link_factory(rect1: joint.shapes.basic.Rect, rect2: joint.shapes.basic.Rect, labelText: string): joint.shapes.standard.Link {
+    var link = new joint.shapes.standard.Link({
         source: { id: rect1.id },
         target: { id: rect2.id },
-        attrs: {
-          '.connection': { stroke: 'black', 'stroke-width': 2 },
-          '.marker-source': { d: 'M 10 0 L 0 5 L 10 10 z', fill: 'black' },
-          '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z', fill: 'black' }
-        },
         labels: [
           { position: 0.5, attrs: { text: { text: labelText } } }
         ]
