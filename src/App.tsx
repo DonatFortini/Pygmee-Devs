@@ -110,7 +110,6 @@ function Header() {
       <img className='logo' src="./src/assets/logo_pygmee.png" alt="" />
       <h1>Pygmee-DEVS</h1>
       <div style={{ display: 'flex', justifyContent: "space-evenly" }}>
-        <button>Sauvegarder</button>
         <button onClick={import_sim} >Importer</button>
       </div>
     </div>
