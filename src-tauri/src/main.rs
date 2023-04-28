@@ -3,8 +3,10 @@
 
 use pyo3::prelude::*;
 use serde::{Serialize, Serializer};
-use std::path::Path;
-use tauri::command::private::ResultKind;
+use std::{path::Path, io::{Read, Write}, fs};
+use tauri::{command::private::ResultKind};
+
+
 /*
 gestion des erreur python
  */
@@ -74,9 +76,23 @@ fn format_code(filepath: String) -> Result<String, MyError> {
 }
 
 
+#[tauri::command]
+fn save(destination_file: String) {
+    let simulation_dir = std::env::current_dir().unwrap().join("simulation");
+    let source_file = simulation_dir.join("temp.txt");
+
+    let mut source = fs::File::open(source_file).unwrap();
+    let mut contents = Vec::new();
+    source.read_to_end(&mut contents).unwrap();
+
+    let mut destination = fs::File::open(simulation_dir.join(&destination_file)).unwrap();
+    destination.set_len(0).unwrap(); 
+    destination.write_all(&contents).unwrap();
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![copy_files,format_code]) //gestion de l'invoke
+        .invoke_handler(tauri::generate_handler![copy_files,format_code,save]) //gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

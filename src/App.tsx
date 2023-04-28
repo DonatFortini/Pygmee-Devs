@@ -7,6 +7,54 @@ import { readTextFile } from '@tauri-apps/api/fs';
 import { useEffect } from "react";
 
 
+var curent_file:string="";
+
+function updateLabel(choice: string) {
+  let cut=choice.split('/');
+  let name=cut.pop()
+  if (name) document.getElementById('label')!.innerText=name;   
+}
+
+/**
+ * appele une fonction du back-end qui format le code du fichier selectioné le renvoi sous forme 
+ * html et le display dans div codeDisplay
+ * 
+ * @param filepath chemin du fichier selectioné dans la fenêtre de dialogue
+ */
+async function updateCodeDisplay(filepath: string) {
+  try {
+    const result: string = await invoke('format_code', { filepath });
+    const codeDisplay = document.getElementById("codeDisplay");
+    codeDisplay!.innerHTML = result;
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+/**
+ * appele une fonction du front-end qui parse le code du fichier selectioné le renvoi sous forme 
+ * de diagramme html et le display dans div modelDisplay
+ * 
+ *@param filepath chemin du fichier selectioné dans la fenêtre de dialogue 
+ */
+async function updateModelDisplay(filepath: string) {
+  readTextFile(filepath)
+    .then(data => {
+      let graph = parseCodeToGraph(data);
+      new joint.dia.Paper({
+        el: document.getElementById("modelDisplay"),
+        model: graph,
+        height: '100%',
+        width: '100%'
+      });
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+
 /**
  * 
  * creer une barre d'outil comportant plusieurs bouton
@@ -41,47 +89,7 @@ function Toolbar() {
 
 
 function Menu() {
-  /**
-   * appele une fonction du back-end qui format le code du fichier selectioné le renvoi sous forme 
-   * html et le display dans div codeDisplay
-   * 
-   * @param filepath chemin du fichier selectioné dans la fenêtre de dialogue
-   */
-  async function updateCodeDisplay(filepath: string) {
-    try {
-      const result: string = await invoke('format_code', { filepath });
-      const codeDisplay = document.getElementById("codeDisplay");
-      codeDisplay!.innerHTML = result;
-
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  /**
-   * appele une fonction du front-end qui parse le code du fichier selectioné le renvoi sous forme 
-   * de diagramme html et le display dans div modelDisplay
-   * 
-   *@param filepath chemin du fichier selectioné dans la fenêtre de dialogue 
-   */
-  async function updateModelDisplay(filepath: string) {
-    readTextFile(filepath)
-      .then(data => {
-        let graph = parseCodeToGraph(data);
-        new joint.dia.Paper({
-          el: document.getElementById("modelDisplay"),
-          model: graph,
-          height: '100%',
-          width: '100%'
-        });
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
-
-
-
+  
   /**
    * ouvre une fenêtre de dialogue qui permet de selectioner un fichier pour le charger
    * dans l'editeur (code et model Display)
@@ -94,6 +102,7 @@ function Menu() {
     });
     if (select) {
       let choice: string = String(select);
+      updateLabel(choice);
       updateCodeDisplay(choice);
       updateModelDisplay(choice);
     }
@@ -147,6 +156,7 @@ function Header() {
       <img className='logo' src="./src/assets/logo_pygmee.png" alt="" />
       <h1>Pygmee-DEVS</h1>
       <div style={{ display: 'flex', justifyContent: "space-evenly" }}>
+        <label id="label" className="label"></label>
         <button onClick={import_sim} >Importer</button>
       </div>
     </div>
@@ -209,9 +219,9 @@ function App() {
   }, []);
 
   async function SaveDoc() {
-    const reponse = await confirm('hey');
+    const reponse = await confirm('etes vous sûr de sauvegarder?');
     if (reponse) {
-      console.log('oui');
+      invoke('save',{curent_file});
     }
   }
 
@@ -224,4 +234,6 @@ function App() {
 }
 
 export default App;
+
+
 

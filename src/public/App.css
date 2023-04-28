@@ -6,6 +6,12 @@ button{
   border: solid black 2px;
 }
 
+.label{
+  color: #DBC2CF;
+  margin-right: 5px;
+  background-color: #2E4756;
+}
+
 .menu {
   display: flex;
   flex-direction: column;
