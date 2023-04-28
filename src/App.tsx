@@ -4,7 +4,7 @@ import "./public/App.css";
 import { parseCodeToGraph } from "./graph/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
-
+import { useEffect } from "react";
 
 
 /**
@@ -12,24 +12,24 @@ import { readTextFile } from '@tauri-apps/api/fs';
  * creer une barre d'outil comportant plusieurs bouton
  * qui interagissent avec le graphique
  */
-function Toolbar(){
+function Toolbar() {
   async function add_link() {
-    
+
   }
 
   async function del_link() {
-    
+
   }
 
   async function del_modl() {
-    
+
   }
 
   async function add_modl() {
-    
+
   }
 
-  return(
+  return (
     <div className="toolbar">
       <button onClick={add_link}>ajouter un lien</button>
       <button onClick={add_modl}>ajouter un module</button>
@@ -80,7 +80,7 @@ function Menu() {
       });
   }
 
-  
+
 
   /**
    * ouvre une fenêtre de dialogue qui permet de selectioner un fichier pour le charger
@@ -90,6 +90,7 @@ function Menu() {
     let select = await open({
       defaultPath: "./simulation",
       multiple: false,
+      filters:[{ name: 'DNL Files', extensions: ['dnl', 'DNL'] }]
     });
     if (select) {
       let choice: string = String(select);
@@ -130,7 +131,8 @@ function Header() {
    */
   async function import_sim() {
     let file = await open({
-      multiple: true
+      multiple: true,
+      filters:[{ name: 'DNL Files', extensions: ['dnl', 'DNL'] }]
     });
     if (file != null) {
       if (Array.isArray(file)) {
@@ -161,9 +163,9 @@ function ModelDisplay() {
   return (
     <div className="model-container">
       <div id="modelDisplay" className="modelDisplay" ></div>
-      <Toolbar/>
+      <Toolbar />
     </div>
-    
+
   );
 }
 
@@ -177,7 +179,7 @@ function Column() {
 }
 
 function MainScreen() {
-  
+
 
   return (
     <div className="main">
@@ -191,6 +193,28 @@ function MainScreen() {
 }
 
 function App() {
+  useEffect(() => {
+    const save = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+        event.preventDefault();
+        SaveDoc();
+      }
+    };
+
+    document.addEventListener('keydown', save);
+
+    return () => {
+      document.removeEventListener('keydown', save);
+    };
+  }, []);
+
+  async function SaveDoc() {
+    const reponse = await confirm('hey');
+    if (reponse) {
+      console.log('oui');
+    }
+  }
+
   return (
     <div style={{ display: 'flex', height: '100vh', }}>
       <Column />
