@@ -5,18 +5,36 @@ import { parseCodeToGraph } from "./graph/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
 
+
+
 /**
  * 
  * creer une barre d'outil comportant plusieurs bouton
  * qui interagissent avec le graphique
  */
 function Toolbar(){
+  async function add_link() {
+    
+  }
+
+  async function del_link() {
+    
+  }
+
+  async function del_modl() {
+    
+  }
+
+  async function add_modl() {
+    
+  }
+
   return(
     <div className="toolbar">
-      <button>r</button>
-      <button>e</button>
-      <button>z</button>
-      <button>a</button>
+      <button onClick={add_link}>ajouter un lien</button>
+      <button onClick={add_modl}>ajouter un module</button>
+      <button onClick={del_link}>supprimer un lien</button>
+      <button onClick={del_modl}>supprimer un module</button>
     </div>
   );
 }
@@ -60,8 +78,9 @@ function Menu() {
       .catch(error => {
         console.error(error);
       });
-
   }
+
+  
 
   /**
    * ouvre une fenêtre de dialogue qui permet de selectioner un fichier pour le charger

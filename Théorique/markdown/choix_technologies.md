@@ -38,7 +38,7 @@ J'ai choisis Tauri car ayant précedement travailler avec Electron-Js j'ai été
 
 <img src="../../src/assets/python.svg" width="200" height="200">
 
-Comme je fais du NLP (natural langage proccessing) et que j'utilise des fonctionalité des modeles DEVS il faillait que j'utilise python pour faire le lien . 
+Comme j'utilise des fonctionalité des modeles DEVS il faillait que j'utilise python pour faire le lien . 
 
 ### pyO3 
 
@@ -46,8 +46,3 @@ Comme je fais du NLP (natural langage proccessing) et que j'utilise des fonction
 
 Permet d'executer du code python depuis rust .
 
-### spaCy 
-
-* https://spacy.io/
-
-Permet de faire du NLP 
