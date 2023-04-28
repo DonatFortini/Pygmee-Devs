@@ -35,13 +35,12 @@ function parseCodeToGraph(code: string): joint.dia.Graph {
 
     //recherche des liens
     const link_name_typeregex = /input on (\w+)|output on (\w+)/g;
-    const link_start_regex1 = /after (\w+) output (\w+)/
-    const link_start_regex2 = /when in (\w+) and receive (\w+)/;
+    const link_start_regex = /when in (\w+) and receive (\w+)|after (\w+) output (\w+)/g;
     const link_transition_regex = /(\w+) go to (\w+)/g;
 
     const links: { name: string; type: string; source: string; target: string; }[] = [];
 
-    let source: string;
+    let source: string = '';
     let target: string = '';
     let type: string;
     let name: string;
@@ -55,19 +54,18 @@ function parseCodeToGraph(code: string): joint.dia.Graph {
             name = match[2];
         }
         // Recherche du module source du lien
-        const startMatch1 = link_start_regex1.exec(code);
-        const startMatch2 = link_start_regex2.exec(code);
+        let startMatch: string[] | null;
 
-
-        if (startMatch1 && startMatch1[2] === name) {
-            source = startMatch1[1];
-        }
-        else if (startMatch2 && startMatch2[2] === name) {
-            source = startMatch2[1];
-        }
-        else {
-            console.error("No transition found for link", name, type);
-            continue;
+        while ((startMatch = link_start_regex.exec(code)) != null) {
+            startMatch = startMatch!.filter((item) => item !== undefined) as RegExpExecArray;
+            if (startMatch && startMatch[2] === name) {
+                source = startMatch[1];
+                console.log("ici");
+            }
+            if (startMatch == null) {
+                console.error("No transition found for link", name, type);
+                continue;
+            }
         }
 
         // Recherche du module cible du lien

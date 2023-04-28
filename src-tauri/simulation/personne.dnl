@@ -1,5 +1,6 @@
 accepts input on GoodMorning!
 generates output on Hello!
+accepts input on hey!
 
 to start, hold in sendHello for time 1!
 after sendHello output Hello!
@@ -7,5 +8,5 @@ from sendHello go to waitforGoodMorning!
 passivate in waitforGoodMorning!
 when in waitforGoodMorning and receive GoodMorning go to passive!
 passivate in passive!
-when in passive go to test!
+when in passive and receive hey go to test!
 passivate in test!
