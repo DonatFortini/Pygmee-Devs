@@ -7,3 +7,5 @@ from sendHello go to waitforGoodMorning!
 passivate in waitforGoodMorning!
 when in waitforGoodMorning and receive GoodMorning go to passive!
 passivate in passive!
+when in passive go to test!
+passivate in test!

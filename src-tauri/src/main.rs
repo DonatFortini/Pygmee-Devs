@@ -3,7 +3,7 @@
 
 use pyo3::prelude::*;
 use serde::{Serialize, Serializer};
-use std::{path::Path, io::{Read, Write}, fs};
+use std::{path::Path, io::Write, fs};
 use tauri::{command::private::ResultKind};
 
 
@@ -60,39 +60,25 @@ fn copy_files(files: Vec<String>) {
     }
 }
 
-#[tauri::command]
-fn format_code(filepath: String) -> Result<String, MyError> {
-    /* on spécifie le path du package python (initialisé avec un __init__.py)
-    utilisé pour stocké les fonction python que l'on va utilisé  */
-    std::env::set_var("PYTHONPATH", "./python");
-
-    Python::with_gil(|py| {
-        let module = py.import("codegen")?; //import du module
-        let function = module.getattr("formater")?; //import de la fonction
-        let args: (String,) = (filepath,); //converti en tuple python
-        let result = function.call1(args)?; //call de la fonction avec 0 parametres
-        Ok(result.extract()?) // recupere le resultat de la requete et le retourne
-    })
-}
-
 
 #[tauri::command]
-fn save(destination_file: String) {
-    let simulation_dir = std::env::current_dir().unwrap().join("simulation");
-    let source_file = simulation_dir.join("temp.txt");
+fn save(current_file: String, text: String) {
+    let path = Path::new(&current_file);
 
-    let mut source = fs::File::open(source_file).unwrap();
-    let mut contents = Vec::new();
-    source.read_to_end(&mut contents).unwrap();
-
-    let mut destination = fs::File::open(simulation_dir.join(&destination_file)).unwrap();
-    destination.set_len(0).unwrap(); 
-    destination.write_all(&contents).unwrap();
+    // Open the file in write-only mode, creating it if it doesn't exist
+    if let Ok(mut file) = fs::File::create(path) {
+        // Truncate the file to 0 bytes
+        if let Ok(_) = file.set_len(0) {
+            // Write the text to the file
+            let _ = file.write_all(text.as_bytes());
+        }
+    }
 }
+
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![copy_files,format_code,save]) //gestion de l'invoke
+        .invoke_handler(tauri::generate_handler![copy_files,save]) //gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

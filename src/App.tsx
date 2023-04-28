@@ -4,15 +4,97 @@ import "./public/App.css";
 import { parseCodeToGraph } from "./graph/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import * as monaco from 'monaco-editor';
 
 
-var curent_file:string="";
+/**definie la syntaxe de base du dnl */
+monaco.languages.register({
+  id: 'dnl'
+});
+
+monaco.languages.setMonarchTokensProvider('dnl', {
+  keywords: [
+    "to", "accepts", "input", "on", "generates", "output",
+    "start", "hold", "in", "for", "time", "after", "from",
+    "go", "passivate", "when", "and", "receive", "the",
+    "perspective", "is", "made", "of", "sends"
+  ],
+
+  tokenizer: {
+    root: [
+      [/\b\d+\b/, "number"],
+      [/[a-z_$][\w$]*/, {
+        cases: {
+          '@keywords': 'keyword',
+          '@default': 'identifier'
+        }
+      }],
+      [/[ \t\r\n]+/, "white"],
+      [/\/\*/, "comment", "@comment"],
+      [/\/\/.*$/, "comment"]
+    ],
+
+    comment: [
+      [/[^*/]+/, "comment"],
+      [/\/\*/, "comment.invalid"],
+      ["\\*/", "comment", "@pop"],
+      [/./, "comment"]
+    ],
+  }
+});
+
+function createMonacoEditor() {
+  const codeDisplayElement = document.getElementById('codeDisplay');
+  if (!codeDisplayElement) {
+    throw new Error("Erreur code display");
+  }
+
+  monaco.editor.defineTheme('dnlTheme', {
+    base: 'vs',
+    inherit: true,
+    rules: [
+      { token: 'number', foreground: '#00FF00' },
+      { token: 'keyword', foreground: '#8b008b' }
+    ],
+    colors: {
+      'editor.background': '#9FA2B2', 
+    }
+  });
+  
+  const editor = monaco.editor.create(codeDisplayElement, {
+    value: '',
+    language: 'dnl',
+    theme: 'dnlTheme',
+    lineNumbers:"off",
+    minimap:{enabled:false}
+  });
+
+  const editorElement = editor.getDomNode();
+  if (editorElement) {
+    editorElement.style.width = '100%';
+    editorElement.style.height = '100%';
+  }
+
+
+  window.addEventListener('resize', () => {
+    editor.layout();
+  });  
+
+  return editor;
+}
+
+
+/**variable globales c'est pas bien mais bon on fait comme on peut*/
+var curent_file: string = "";
+var graph: joint.dia.Graph;
+var editor:monaco.editor.IStandaloneCodeEditor;
 
 function updateLabel(choice: string) {
-  let cut=choice.split('/');
-  let name=cut.pop()
-  if (name) document.getElementById('label')!.innerText=name;   
+  curent_file=choice;
+  let cut = choice.split('/');
+  let name = cut.pop()
+  if (name) document.getElementById('label')!.innerText = name;
 }
 
 /**
@@ -22,14 +104,11 @@ function updateLabel(choice: string) {
  * @param filepath chemin du fichier selectioné dans la fenêtre de dialogue
  */
 async function updateCodeDisplay(filepath: string) {
-  try {
-    const result: string = await invoke('format_code', { filepath });
-    const codeDisplay = document.getElementById("codeDisplay");
-    codeDisplay!.innerHTML = result;
-
-  } catch (error) {
-    console.error(error);
-  }
+  readTextFile(filepath)
+    .then(data =>{
+      editor=createMonacoEditor();
+      editor.setValue(data);
+    });
 }
 
 /**
@@ -41,7 +120,7 @@ async function updateCodeDisplay(filepath: string) {
 async function updateModelDisplay(filepath: string) {
   readTextFile(filepath)
     .then(data => {
-      let graph = parseCodeToGraph(data);
+      graph = parseCodeToGraph(data);
       new joint.dia.Paper({
         el: document.getElementById("modelDisplay"),
         model: graph,
@@ -89,7 +168,7 @@ function Toolbar() {
 
 
 function Menu() {
-  
+
   /**
    * ouvre une fenêtre de dialogue qui permet de selectioner un fichier pour le charger
    * dans l'editeur (code et model Display)
@@ -98,7 +177,7 @@ function Menu() {
     let select = await open({
       defaultPath: "./simulation",
       multiple: false,
-      filters:[{ name: 'DNL Files', extensions: ['dnl', 'DNL'] }]
+      filters: [{ name: 'DNL Files', extensions: ['dnl', 'DNL'] }]
     });
     if (select) {
       let choice: string = String(select);
@@ -141,7 +220,7 @@ function Header() {
   async function import_sim() {
     let file = await open({
       multiple: true,
-      filters:[{ name: 'DNL Files', extensions: ['dnl', 'DNL'] }]
+      filters: [{ name: 'DNL Files', extensions: ['dnl', 'DNL'] }]
     });
     if (file != null) {
       if (Array.isArray(file)) {
@@ -163,7 +242,7 @@ function Header() {
   );
 }
 
-function CodeDisplay() {
+function CodeDisplay() {  
   return (
     <div id="codeDisplay" className="codeDisplay" ></div>
   );
@@ -220,10 +299,12 @@ function App() {
 
   async function SaveDoc() {
     const reponse = await confirm('etes vous sûr de sauvegarder?');
-    if (reponse) {
-      invoke('save',{curent_file});
+    if (reponse && editor.getValue()!=undefined) {
+      var text:string = editor.getValue();
+      await invoke('save', { currentFile: curent_file, text: text });
     }
   }
+  
 
   return (
     <div style={{ display: 'flex', height: '100vh', }}>
