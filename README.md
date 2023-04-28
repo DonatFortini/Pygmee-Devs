@@ -8,9 +8,9 @@ Le but du projet est de créer une application simplifiant la simulation , de lu
 
 Permet de faciliter la simulation. L’utilisateur peut importer ou creer des modele puis il peut les modifier et visualiser en fonction de divers paramètres.
 
-La principale caracteristique de l'app est sa capacité a utilise le NLP (langage naturel) pour generer des modeles et des parametre les concernant.
+La principale caracteristique de l'app est sa capacité a interagir graphiquement pour generer des modeles et des parametre les concernant.
 
-Permet à la fin de générer un fichier yaml.
+Permet à la fin de générer un fichier .amd ou python utilisable directement sur DEVSimPy.
 
 ## maquette figma
 
