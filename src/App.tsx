@@ -62,7 +62,7 @@ async function updateModelDisplay(filepath: string) {
  */
 function Toolbar() {
   async function add_link() {
-
+    console.log('helo');
   }
 
   async function del_link() {
@@ -79,10 +79,10 @@ function Toolbar() {
 
   return (
     <div className="toolbar">
-      <button onClick={add_link}>ajouter un lien</button>
-      <button onClick={add_modl}>ajouter un module</button>
-      <button onClick={del_link}>supprimer un lien</button>
-      <button onClick={del_modl}>supprimer un module</button>
+      <img src="./src/assets/link.svg" onClick={add_link} className="link" />
+      <img src="./src/assets/module.svg" onClick={add_modl} className="mod" />
+      <img src="./src/assets/del_link.svg" onClick={del_link} className="del_link" />
+      <img src="./src/assets/del_module.svg" onClick={del_modl} className="del_mod" />
     </div>
   );
 }

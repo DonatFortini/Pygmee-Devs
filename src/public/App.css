@@ -34,6 +34,14 @@ button{
   width: 5.5rem;
 }
 
+.mod,.del_mod,.link,.del_link{
+  height: 100%;
+  width: 100%;
+  border: black solid 1px;
+}
+
+
+
 .codeDisplay{
   height: 70%;
   width: 25%;
@@ -51,7 +59,7 @@ button{
 }
 
 .modelDisplay{
-  height: 95%;
+  height: 90%;
   width:100%;
   background-color:#9FA2B2;
 }
@@ -59,7 +67,7 @@ button{
 .toolbar{
   display: flex;
   justify-content: right;
-  height: 5%;
+  height: 10%;
   background-color:#9FA2B2;
   border: solid 2px gray;
 }
