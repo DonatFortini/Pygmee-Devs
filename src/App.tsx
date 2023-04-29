@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { confirm, open } from '@tauri-apps/api/dialog';
 import "./public/App.css";
-import { parseCodeToGraph } from "./graph/graphGenerator";
+import { parseCodeToGraph } from "./script/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
 import { useEffect, useState } from "react";
@@ -136,6 +136,13 @@ async function updateModelDisplay(filepath: string) {
       paper.on(' cell:pointerdblclick',
         function (cellView: { model: { id: string; }; }) {
           let mod = cellView.model.id;
+          const webview = new WebviewWindow('theUniqueLabel', {
+            url: './src/html/code.html',
+            width: 400,
+            height: 200,
+            resizable: false,
+            title:mod
+          });
           graph.getCell(mod).attr().cache = { "text": "test" };
           console.log(graph.getCell(mod));
         }
