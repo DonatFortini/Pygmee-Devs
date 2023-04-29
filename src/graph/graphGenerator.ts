@@ -3,6 +3,7 @@ import * as joint from 'jointjs';
 
 export { parseCodeToGraph }
 
+
 /**
  *Tout d'abord la fonction parse le code pour trouver les modules
  *et les liens, une fois trouvés elle les instancient et les ajoutent
@@ -12,10 +13,11 @@ export { parseCodeToGraph }
  * @returns Un objet `joint.dia.Graph` représentant le Graphique.
  */
 function parseCodeToGraph(code: string): joint.dia.Graph {
+    
     const graph = new joint.dia.Graph();
 
     //recherche des modules
-    const modulesRegex = /hold in (.+?) for time (\d+)|go to (\w+)|passivate in (\w+)/g;
+    const modulesRegex = /hold in (.+?) for time (\d+)|passivate in (\w+)/g;
     let match;
     const modules: { name: string; time: number }[] = [];
     // Boucle sur les correspondances trouvées par la regex pour extraire les noms et temps des modules
@@ -94,7 +96,7 @@ function parseCodeToGraph(code: string): joint.dia.Graph {
     let x = 10;
     let y = 10;
     for (const iter of modules) {
-        const m = module_factory(iter.name, iter.time, { x, y });
+        var m = module_factory(iter.name, iter.time, { x, y });
         graph.addCell(m);
         x += 100;
     }

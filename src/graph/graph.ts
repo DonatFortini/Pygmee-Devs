@@ -17,10 +17,12 @@ function module_factory(name: string, time = Infinity, pos = { x: 0, y: 0 }): jo
         size: { width: 100, height: 50 },
         attrs: {
             rect: { fill: '#FFFFFF', stroke: '#000000', 'stroke-width': 2 },
-            text: { text: name + "\n" + timeString, 'font-size': 10, 'text-anchor': 'middle', 'y-alignment': 'middle', fill: '#000000' }
+            text: { text: name + "\n" + timeString, 'font-size': 10, 'text-anchor': 'middle', 'y-alignment': 'middle', fill: '#000000' },
+            cache:{}
         },
-        id: name
+        id: name 
     });
+
 
     return rect;
 }

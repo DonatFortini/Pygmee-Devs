@@ -58,16 +58,16 @@ function createMonacoEditor() {
       { token: 'keyword', foreground: '#8b008b' }
     ],
     colors: {
-      'editor.background': '#9FA2B2', 
+      'editor.background': '#9FA2B2',
     }
   });
-  
+
   const editor = monaco.editor.create(codeDisplayElement, {
     value: '',
     language: 'dnl',
     theme: 'dnlTheme',
-    lineNumbers:"off",
-    minimap:{enabled:false}
+    lineNumbers: "off",
+    minimap: { enabled: false }
   });
 
   const editorElement = editor.getDomNode();
@@ -79,7 +79,7 @@ function createMonacoEditor() {
 
   window.addEventListener('resize', () => {
     editor.layout();
-  });  
+  });
 
   return editor;
 }
@@ -88,10 +88,11 @@ function createMonacoEditor() {
 /**variable globales c'est pas bien mais bon on fait comme on peut*/
 var curent_file: string = "";
 var graph: joint.dia.Graph;
-var editor:monaco.editor.IStandaloneCodeEditor;
+var editor: monaco.editor.IStandaloneCodeEditor;
+var paper: joint.dia.Paper;
 
 function updateLabel(choice: string) {
-  curent_file=choice;
+  curent_file = choice;
   let cut = choice.split('/');
   let name = cut.pop()
   if (name) document.getElementById('label')!.innerText = name;
@@ -104,9 +105,12 @@ function updateLabel(choice: string) {
  * @param filepath chemin du fichier selectioné dans la fenêtre de dialogue
  */
 async function updateCodeDisplay(filepath: string) {
+  if (editor) {
+    editor.dispose();
+  }
   readTextFile(filepath)
-    .then(data =>{
-      editor=createMonacoEditor();
+    .then(data => {
+      editor = createMonacoEditor();
       editor.setValue(data);
     });
 }
@@ -121,12 +125,19 @@ async function updateModelDisplay(filepath: string) {
   readTextFile(filepath)
     .then(data => {
       graph = parseCodeToGraph(data);
-      new joint.dia.Paper({
+      paper = new joint.dia.Paper({
         el: document.getElementById("modelDisplay"),
         model: graph,
         height: '100%',
         width: '100%'
       });
+      paper.on(' cell:pointerdblclick',
+        function (cellView: { model: { id: string; }; }) {
+          let mod=cellView.model.id;
+          graph.getCell(mod).attr().cache={"text":"test"};
+          console.log(graph.getCell(mod));
+        }
+      );
     })
     .catch(error => {
       console.error(error);
@@ -140,19 +151,19 @@ async function updateModelDisplay(filepath: string) {
  * qui interagissent avec le graphique
  */
 function Toolbar() {
-  async function add_link() {
-    console.log('helo');
-  }
-
-  async function del_link() {
+  function add_link() {
 
   }
 
-  async function del_modl() {
+  function del_link() {
 
   }
 
-  async function add_modl() {
+  function del_modl() {
+
+  }
+
+  function add_modl() {
 
   }
 
@@ -242,7 +253,7 @@ function Header() {
   );
 }
 
-function CodeDisplay() {  
+function CodeDisplay() {
   return (
     <div id="codeDisplay" className="codeDisplay" ></div>
   );
@@ -299,12 +310,12 @@ function App() {
 
   async function SaveDoc() {
     const reponse = await confirm('etes vous sûr de sauvegarder?');
-    if (reponse && editor.getValue()!=undefined) {
-      var text:string = editor.getValue();
+    if (reponse && editor.getValue() != undefined) {
+      var text: string = editor.getValue();
       await invoke('save', { currentFile: curent_file, text: text });
     }
   }
-  
+
 
   return (
     <div style={{ display: 'flex', height: '100vh', }}>
