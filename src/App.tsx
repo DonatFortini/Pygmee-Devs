@@ -4,8 +4,10 @@ import "./public/App.css";
 import { parseCodeToGraph } from "./graph/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import * as monaco from 'monaco-editor';
+import { WebviewWindow } from '@tauri-apps/api/window'
+
 
 
 /**definie la syntaxe de base du dnl */
@@ -133,8 +135,8 @@ async function updateModelDisplay(filepath: string) {
       });
       paper.on(' cell:pointerdblclick',
         function (cellView: { model: { id: string; }; }) {
-          let mod=cellView.model.id;
-          graph.getCell(mod).attr().cache={"text":"test"};
+          let mod = cellView.model.id;
+          graph.getCell(mod).attr().cache = { "text": "test" };
           console.log(graph.getCell(mod));
         }
       );
@@ -151,8 +153,15 @@ async function updateModelDisplay(filepath: string) {
  * qui interagissent avec le graphique
  */
 function Toolbar() {
-  function add_link() {
 
+  async function add_link() {
+    const webview = new WebviewWindow('theUniqueLabel', {
+      url: './src/html/form_link.html',
+      width: 400,
+      height: 200,
+      resizable: false,
+      title: "Ajout lien"
+    });
   }
 
   function del_link() {

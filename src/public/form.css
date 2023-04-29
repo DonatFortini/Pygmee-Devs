@@ -1,0 +1,23 @@
+body{
+    background-color: #1B3542;
+}
+
+input{
+    width: 100px;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.cont1{
+    display: flex;
+    justify-content: space-between;
+}
+
+.cont2{
+    display: flex;
+    justify-content: space-between;
+}
