@@ -162,6 +162,7 @@ function Toolbar() {
       resizable: false,
       title: "Ajout lien"
     });
+
   }
 
   function del_link() {
@@ -173,7 +174,13 @@ function Toolbar() {
   }
 
   function add_modl() {
-
+    const webview = new WebviewWindow('theUniqueLabel', {
+      url: './src/html/form_modl.html',
+      width: 400,
+      height: 200,
+      resizable: false,
+      title: "Ajout module"
+    });
   }
 
   return (
