@@ -221,9 +221,20 @@ function Menu() {
     }
   }
 
+  async function new_fichier() {
+    const res:string | null=prompt('nom du fichier:');
+    if(res){
+      const filepath:string=await invoke('new_file',{filename:res});
+      let code: string = await readTextFile(filepath);
+      updateLabel(code);
+      updateCodeDisplay(code);
+      updateModelDisplay(code);
+    }
+  }
+
   return (
     <div className="menu">
-      <button>nouveau modèle</button>
+      <button onClick={new_fichier}>nouveau modèle</button>
       <button>creer une librairie</button>
       <button onClick={load_fichier}>ouvrir un modèle atomique</button>
     </div>

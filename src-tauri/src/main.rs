@@ -75,10 +75,19 @@ fn save(current_file: String, text: String) {
     }
 }
 
+#[tauri::command]
+fn new_file(filename:String)->String{
+    let simulation_dir = std::env::current_dir().unwrap().join("simulation");
+    let path = simulation_dir.join(filename+".dnl");
+    let cloned_path = path.clone(); 
+    let _=fs::File::create(&path);
+    cloned_path.to_string_lossy().to_string()
+}
+
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![copy_files,save]) //gestion de l'invoke
+        .invoke_handler(tauri::generate_handler![copy_files,save,new_file]) //gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
