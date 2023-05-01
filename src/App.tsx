@@ -4,88 +4,10 @@ import "./public/App.css";
 import { parseCodeToGraph } from "./script/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import * as monaco from 'monaco-editor';
+import {createMonacoEditor} from './script/ide'
 import { WebviewWindow } from '@tauri-apps/api/window'
-
-
-
-/**definie la syntaxe de base du dnl */
-monaco.languages.register({
-  id: 'dnl'
-});
-
-monaco.languages.setMonarchTokensProvider('dnl', {
-  keywords: [
-    "to", "accepts", "input", "on", "generates", "output",
-    "start", "hold", "in", "for", "time", "after", "from",
-    "go", "passivate", "when", "and", "receive", "the",
-    "perspective", "is", "made", "of", "sends"
-  ],
-
-  tokenizer: {
-    root: [
-      [/\b\d+\b/, "number"],
-      [/[a-z_$][\w$]*/, {
-        cases: {
-          '@keywords': 'keyword',
-          '@default': 'identifier'
-        }
-      }],
-      [/[ \t\r\n]+/, "white"],
-      [/\/\*/, "comment", "@comment"],
-      [/\/\/.*$/, "comment"]
-    ],
-
-    comment: [
-      [/[^*/]+/, "comment"],
-      [/\/\*/, "comment.invalid"],
-      ["\\*/", "comment", "@pop"],
-      [/./, "comment"]
-    ],
-  }
-});
-
-function createMonacoEditor() {
-  const codeDisplayElement = document.getElementById('codeDisplay');
-  if (!codeDisplayElement) {
-    throw new Error("Erreur code display");
-  }
-
-  monaco.editor.defineTheme('dnlTheme', {
-    base: 'vs',
-    inherit: true,
-    rules: [
-      { token: 'number', foreground: '#00FF00' },
-      { token: 'keyword', foreground: '#8b008b' }
-    ],
-    colors: {
-      'editor.background': '#9FA2B2',
-    }
-  });
-
-  const editor = monaco.editor.create(codeDisplayElement, {
-    value: '',
-    language: 'dnl',
-    theme: 'dnlTheme',
-    lineNumbers: "off",
-    minimap: { enabled: false }
-  });
-
-  const editorElement = editor.getDomNode();
-  if (editorElement) {
-    editorElement.style.width = '100%';
-    editorElement.style.height = '100%';
-  }
-
-
-  window.addEventListener('resize', () => {
-    editor.layout();
-  });
-
-  return editor;
-}
-
 
 /**variable globales c'est pas bien mais bon on fait comme on peut*/
 var curent_file: string = "";
@@ -93,6 +15,11 @@ var graph: joint.dia.Graph;
 var editor: monaco.editor.IStandaloneCodeEditor;
 var paper: joint.dia.Paper;
 
+
+/**
+ * ajoute le nom du fichier en cours au label
+ * @param choice le nom du fichier actuellement chargé
+ */
 function updateLabel(choice: string) {
   curent_file = choice;
   let cut = choice.split('/');
@@ -101,12 +28,11 @@ function updateLabel(choice: string) {
 }
 
 /**
- * appele une fonction du back-end qui format le code du fichier selectioné le renvoi sous forme 
- * html et le display dans div codeDisplay
+ * lit le contenu du fichier passer en parametre et initialise un editeur de texte avec le contenu
  * 
  * @param filepath chemin du fichier selectioné dans la fenêtre de dialogue
  */
-async function updateCodeDisplay(filepath: string) {
+async function initCodeDisplay(filepath: string) {
   if (editor) {
     editor.dispose();
   }
@@ -123,7 +49,7 @@ async function updateCodeDisplay(filepath: string) {
  * 
  *@param filepath chemin du fichier selectioné dans la fenêtre de dialogue 
  */
-async function updateModelDisplay(filepath: string) {
+async function initModelDisplay(filepath: string) {
   readTextFile(filepath)
     .then(data => {
       graph = parseCodeToGraph(data);
@@ -141,7 +67,7 @@ async function updateModelDisplay(filepath: string) {
             width: 400,
             height: 200,
             resizable: false,
-            title:mod
+            title: mod
           });
           graph.getCell(mod).attr().cache = { "text": "test" };
           console.log(graph.getCell(mod));
@@ -156,19 +82,24 @@ async function updateModelDisplay(filepath: string) {
 
 /**
  * 
- * creer une barre d'outil comportant plusieurs bouton
+ * crée une barre d'outil comportant plusieurs boutons
  * qui interagissent avec le graphique
  */
 function Toolbar() {
-
-  async function add_link() {
+  var instance:WebviewWindow;
+  function createWebview(url: string, titre: string) {
     const webview = new WebviewWindow('theUniqueLabel', {
-      url: './src/html/form_link.html',
+      url: url,
       width: 400,
       height: 200,
       resizable: false,
-      title: "Ajout lien"
+      title: titre
     });
+    return webview;
+  }
+
+  function add_link() {
+    instance=createWebview("./src/html/form_link.html","Ajout lien");
 
   }
 
@@ -181,13 +112,7 @@ function Toolbar() {
   }
 
   function add_modl() {
-    const webview = new WebviewWindow('theUniqueLabel', {
-      url: './src/html/form_modl.html',
-      width: 400,
-      height: 200,
-      resizable: false,
-      title: "Ajout module"
-    });
+    instance=createWebview("./src/html/form_modl.html","Ajout module");
   }
 
   return (
@@ -216,19 +141,19 @@ function Menu() {
     if (select) {
       let choice: string = String(select);
       updateLabel(choice);
-      updateCodeDisplay(choice);
-      updateModelDisplay(choice);
+      initCodeDisplay(choice);
+      initModelDisplay(choice);
     }
   }
 
   async function new_fichier() {
-    const res:string | null=prompt('nom du fichier:');
-    if(res){
-      const filepath:string=await invoke('new_file',{filename:res});
+    const res: string | null = prompt('nom du fichier:');
+    if (res) {
+      const filepath: string = await invoke('new_file', { filename: res });
       let code: string = await readTextFile(filepath);
       updateLabel(code);
-      updateCodeDisplay(code);
-      updateModelDisplay(code);
+      initCodeDisplay(code);
+      initModelDisplay(code);
     }
   }
 
@@ -243,7 +168,7 @@ function Menu() {
 
 function ExportButton() {
   /**
-   * enregistre le ficgier final dnas le dossier téléchargements
+   * enregistre le fichier final dnas le dossier téléchargements
    */
   async function finish() {
     let conf = await confirm('êtes-vous sûr de vouloir finir', 'Exporter');
@@ -274,7 +199,6 @@ function Header() {
     }
   }
 
-
   return (
     <div className="header">
       <img className='logo' src="./src/assets/logo_pygmee.png" alt="" />
@@ -299,7 +223,6 @@ function ModelDisplay() {
       <div id="modelDisplay" className="modelDisplay" ></div>
       <Toolbar />
     </div>
-
   );
 }
 
@@ -313,8 +236,6 @@ function Column() {
 }
 
 function MainScreen() {
-
-
   return (
     <div className="main">
       <Header />
@@ -349,7 +270,6 @@ function App() {
       await invoke('save', { currentFile: curent_file, text: text });
     }
   }
-
 
   return (
     <div style={{ display: 'flex', height: '100vh', }}>
