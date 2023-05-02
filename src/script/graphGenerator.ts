@@ -1,4 +1,4 @@
-import { module_factory, link_factory } from './graph';
+import { module_factory, link_factory ,start} from './graph';
 import * as joint from 'jointjs';
 
 export { parseCodeToGraph }
@@ -13,9 +13,55 @@ export { parseCodeToGraph }
  * @returns Un objet `joint.dia.Graph` représentant le Graphique.
  */
 function parseCodeToGraph(code: string): joint.dia.Graph {
-    
+
     const graph = new joint.dia.Graph();
 
+    const res = code_to_parse(code);
+    const modules = res.modules;
+    const links = res.links;
+
+    let x = 10;
+    let y = 10;
+    let premier: boolean = true;
+    for (const iter of modules) {
+        if (premier) {
+            var m = module_factory(iter.name, iter.time, { x, y });
+            const startmod=start(m);
+            m.embed(startmod);
+            graph.addCells([startmod,m])
+            x += 100;
+            premier=false;
+        }
+        else {
+            var m = module_factory(iter.name, iter.time, { x, y });
+            graph.addCell(m);
+            x += 100;
+        }
+
+    }
+
+
+    for (const iter of links) {
+        const module1 = graph.getCell(iter.source) as joint.shapes.basic.Rect;
+        const module2 = graph.getCell(iter.target) as joint.shapes.basic.Rect;
+        let label: string;
+        if (iter.type == 'input') {
+            label = "?" + iter.name
+        }
+        else {
+            label = "!" + iter.name
+        }
+
+
+        const m = link_factory(module1, module2, label);
+        graph.addCell(m);
+    }
+
+    return graph;
+}
+
+
+function code_to_parse(code: string) {
     //recherche des modules
     const modulesRegex = /hold in (.+?) for time (\d+)|passivate in (\w+)/g;
     let match;
@@ -90,33 +136,6 @@ function parseCodeToGraph(code: string): joint.dia.Graph {
 
     }
 
-    console.log("Modules:", modules);
-    console.log("Links:", links);
-
-    let x = 10;
-    let y = 10;
-    for (const iter of modules) {
-        var m = module_factory(iter.name, iter.time, { x, y });
-        graph.addCell(m);
-        x += 100;
-    }
-
-
-    for (const iter of links) {
-        const module1 = graph.getCell(iter.source) as joint.shapes.basic.Rect;
-        const module2 = graph.getCell(iter.target) as joint.shapes.basic.Rect;
-        let label: string;
-        if (iter.type == 'input') {
-            label = "?" + iter.name
-        }
-        else {
-            label = "!" + iter.name
-        }
-
-
-        const m = link_factory(module1, module2, label);
-        graph.addCell(m);
-    }
-
-    return graph;
+    console.log({ modules, links });
+    return { modules, links };
 }

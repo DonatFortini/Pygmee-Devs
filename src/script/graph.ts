@@ -1,4 +1,4 @@
-export { module_factory, link_factory }
+export { module_factory, link_factory ,start}
 import * as joint from 'jointjs';
 
 /**
@@ -18,9 +18,11 @@ function module_factory(name: string, time = Infinity, pos = { x: 0, y: 0 }): jo
         attrs: {
             rect: { fill: '#FFFFFF', stroke: '#000000', 'stroke-width': 2 },
             text: { text: name + "\n" + timeString, 'font-size': 10, 'text-anchor': 'middle', 'y-alignment': 'middle', fill: '#000000' },
-            cache:{}
+            cache: {},
+            name:{name}
         },
-        id: name 
+        id: name,
+        
     });
 
 
@@ -41,12 +43,33 @@ function link_factory(rect1: joint.shapes.basic.Rect, rect2: joint.shapes.basic.
         source: { id: rect1.id },
         target: { id: rect2.id },
         labels: [
-          { position: 0.5, attrs: { text: { text: labelText } } }
+            { position: 0.5, attrs: { text: { text: labelText } } }
         ]
-      });
-      
+    });
+
 
     return link;
+}
+
+
+/**
+ * genere un rectangle avec un autre rectangle imbriqué 
+ * @param childRect le rectangle que l'on veut imbriqué
+ * @returns le rectangle composé
+ */
+function start(childRect: joint.shapes.basic.Rect) {
+    const parent = new joint.shapes.basic.Rect({
+        position: {x:5,y:5},
+        size: { width: childRect.size().width + 10, height: childRect.size().height+ 10 },
+        attrs: {
+            body: {
+                stroke: 'black',
+                fill:'white'
+            },
+        },
+    });
+
+    return parent;
 }
 
 

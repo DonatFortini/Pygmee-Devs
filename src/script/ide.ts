@@ -79,9 +79,9 @@ function createMonacoEditor() {
         ],
         colors: {
             'editor.background': '#9FA2B2',
-            'editorSuggestWidget.background': '#9FA2B2', // Background color of the suggestion list
-            'editorSuggestWidget.foreground': '#000000', // Text color of the suggestion list
-            'editorSuggestWidget.selectedBackground': '#A0A0A0', // Background color of the selected suggestion
+            'editorSuggestWidget.background': '#9FA2B2',
+            'editorSuggestWidget.foreground': '#000000', 
+            'editorSuggestWidget.selectedBackground': '#A0A0A0', 
             'editorSuggestWidget.highlightForeground': '#0000FF',
         }
     });
