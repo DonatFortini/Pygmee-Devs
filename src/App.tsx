@@ -4,7 +4,7 @@ import "./public/App.css";
 import { code_to_parse, parseCodeToGraph, updateGraph } from "./script/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as monaco from 'monaco-editor';
 import { createMonacoEditor } from './script/ide'
 import { module_factory, link_factory } from './script/graph'
@@ -47,18 +47,16 @@ async function initCodeDisplay(filepath: string) {
           var result = updateGraph(code_to_parse(editor.getValue()), graph);
           console.log(result);
           for (const mod of result.mods) {
-            var m=module_factory(mod.name, mod.time);
+            var m = module_factory(mod.name, mod.time);
             graph.addCell(m);
           }
           for (const lin of result.links) {
             if (lin.type == "output") {
-              console.log(graph.getCell(lin.source));
-              
-              var l=link_factory(graph.getCell(lin.source) as joint.shapes.basic.Rect, graph.getCell(lin.target) as joint.shapes.basic.Rect, "!" + lin.name);
+              var l = link_factory(graph.getCell(lin.source) as joint.shapes.basic.Rect, graph.getCell(lin.target) as joint.shapes.basic.Rect, "!" + lin.name);
               graph.addCell(l);
             }
             else {
-              var l=link_factory(graph.getCell(lin.source) as joint.shapes.basic.Rect, graph.getCell(lin.target) as joint.shapes.basic.Rect, "?"+lin.name);
+              var l = link_factory(graph.getCell(lin.source) as joint.shapes.basic.Rect, graph.getCell(lin.target) as joint.shapes.basic.Rect, "?" + lin.name);
               graph.addCell(l);
             }
           }
@@ -122,13 +120,19 @@ function Toolbar() {
     return webview;
   }
 
+
   function add_link() {
     instance = createWebview("./src/html/form_link.html", "Ajout lien");
-
+    instance.listen('formSubmit', (eventData: unknown) => {
+      const formData = eventData as FormData;
+      const username = formData.get('username');
+      const password = formData.get('password');
+      console.log('Form Data:', formData);
+    });
   }
 
-  function del_link() {
-
+  async function del_link() {
+    
   }
 
   function del_modl() {
@@ -137,6 +141,12 @@ function Toolbar() {
 
   function add_modl() {
     instance = createWebview("./src/html/form_modl.html", "Ajout module");
+    instance.listen('formSubmit', (eventData: unknown) => {
+      const formData = eventData as FormData;
+      const username = formData.get('username');
+      const password = formData.get('password');
+      console.log('Form Data:', formData);
+    });
   }
 
   return (
@@ -151,7 +161,6 @@ function Toolbar() {
 
 
 function Menu() {
-
   /**
    * ouvre une fenêtre de dialogue qui permet de selectioner un fichier pour le charger
    * dans l'editeur (code et model Display)

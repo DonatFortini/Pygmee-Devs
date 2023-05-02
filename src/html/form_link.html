@@ -11,13 +11,13 @@
 </head>
 
 <body>
-    <form id="form">
+    <div id="form">
         <div class="container">
             <div class="cont1">
                 <label>type:</label>
                 <select id="type">
-                    <option>input</option>
-                    <option>output</option>
+                    <option value="input">input</option>
+                    <option value="output">output</option>
                 </select>
                 <label>nom:</label>
                 <input type="text" id="nom" required>
@@ -28,9 +28,25 @@
                 <label>cible:</label>
                 <input type="text" id="cible" required>
             </div>
-            <button type="submit">envoyer</button>
+            <button id="sub">envoyer</button>
         </div>
-    </form>
+    </div>
 </body>
+<script>
+    const { invoke } = window.__TAURI__.tauri
+    
+    const sub = document.getElementById('sub');
+
+    sub.addEventListener('click', () => {
+        const type = document.getElementById('type').value;
+        const name = document.getElementById('nom').value;
+        const source = document.getElementById('source').value;
+        const target = document.getElementById('cible').value;
+        console.log(type, name, source, target);
+        invoke('add_link', { types: type, name: name, source: source, target: target });
+    })
+
+
+</script>
 
 </html>

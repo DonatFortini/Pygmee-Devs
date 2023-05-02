@@ -4,7 +4,7 @@
     "beforeBuildCommand": "npm run build",
     "devPath": "http://localhost:1420",
     "distDir": "../dist",
-    "withGlobalTauri": false
+    "withGlobalTauri": true
   },
   "package": {
     "productName": "Pygmee",
@@ -80,9 +80,9 @@
         "sidecar": false
       },
       "window": {
-        "all": false,
+        "all": true,
         "center": false,
-        "close": false,
+        "close": true,
         "create": true,
         "hide": false,
         "maximize": false,

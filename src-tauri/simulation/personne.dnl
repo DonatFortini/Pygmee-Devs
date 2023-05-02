@@ -10,3 +10,4 @@ when in waitforGoodMorning and receive GoodMorning go to passive!
 passivate in passive!
 when in passive and receive hey go to test!
 hold in test for time 5!
+passivate in test2

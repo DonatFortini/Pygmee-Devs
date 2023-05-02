@@ -11,24 +11,27 @@
 </head>
 
 <body>
-    <form id="form">
+    <div id="form">
         <div class="container">
             <div class="cont2">
                 <label>nom:</label>
                 <input type="text" id="nom" required>
                 <label>temps:</label>
-                <input type="text" id="temps" >
+                <input type="text" id="temps">
             </div>
-            <button type="submit">envoyer</button>
+            <button id="sub">envoyer</button>
         </div>
-    </form>
+    </div>
 </body>
-<script >
-    const nom=document.getElementById('nom');
-    const temps=document.getElementById('temps');
-    const form=document.getElementById("form");
-    form.addEventListener('submit',()=>{
-        console.log(nom,temps);
+<script>
+    const { invoke } = window.__TAURI__.tauri
+    const form = document.getElementById("sub");
+    form.addEventListener('click', () => {
+        const nom = document.getElementById('nom').value;
+        const temps = eval(document.getElementById('temps').value);
+        console.log(nom, temps);
+        invoke('add_mod', { name: nom, time: temps });
     })
 </script>
+
 </html>

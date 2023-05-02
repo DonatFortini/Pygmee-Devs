@@ -84,10 +84,24 @@ fn new_file(filename:String)->String{
     cloned_path.to_string_lossy().to_string()
 }
 
+#[tauri::command]
+fn test(){
+    println!("oui");
+}
+
+#[tauri::command]
+fn add_link(types:String,name:String,source:String,target:String){
+    println!("{} {} {} {}",types,name,source,target);
+}
+
+#[tauri::command]
+fn add_mod(name:String,time:i32){
+    println!("{} {}",name,time);
+}
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![copy_files,save,new_file]) //gestion de l'invoke
+        .invoke_handler(tauri::generate_handler![copy_files,save,new_file,test,add_link,add_mod]) //gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

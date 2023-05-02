@@ -9,8 +9,22 @@
 </head>
 
 <body>
-    <div id="editor"></div>
+    <div id="editor">
+        
+    </div>
+    <button id="t">enregister</button>
 </body>
 
-<script src="../script/code.ts"></script>
+<script>
+    const {invoke}=window.__TAURI__.tauri
+    const {monaco}=require('../../node_modules/monaco-editor');
+    const but=document.getElementById('t');
+    but.addEventListener('click',()=>{
+        console.log('ici');
+        invoke('test');
+    })
+    
+
+</script>
 </html>
+
