@@ -1,7 +1,7 @@
 import { module_factory, link_factory ,start} from './graph';
 import * as joint from 'jointjs';
 
-export { parseCodeToGraph }
+export { parseCodeToGraph ,code_to_parse,updateGraph}
 
 
 /**
@@ -108,7 +108,6 @@ function code_to_parse(code: string) {
             startMatch = startMatch!.filter((item) => item !== undefined) as RegExpExecArray;
             if (startMatch && startMatch[2] === name) {
                 source = startMatch[1];
-                console.log("ici");
             }
             if (startMatch == null) {
                 console.error("No transition found for link", name, type);
@@ -136,6 +135,34 @@ function code_to_parse(code: string) {
 
     }
 
-    console.log({ modules, links });
+    //console.log({ modules, links });
     return { modules, links };
+}
+
+
+function updateGraph(uparray: { modules: { name: string; time: number }[], links: { name: string; type: string; source: string; target: string; }[]},graph:joint.dia.Graph){
+    var mods=uparray.modules;
+    var links=uparray.links;
+
+    for(const iter of mods){
+        if(graph.getCell(iter.name)){
+            mods=mods.filter((elem,i)=> elem!== iter);
+        }
+    }
+
+    for(const iter of links){
+        if(iter.type=="output"){
+            if(graph.getCell("!"+iter.name)){
+            links=links.filter((elem,i) => elem!== iter);
+            }
+        }
+        else if(iter.type=="input"){
+            if(graph.getCell("?"+iter.name)){
+            links=links.filter((elem,i) => elem!== iter);
+            }
+        }
+        
+    }
+
+    return {mods,links}
 }

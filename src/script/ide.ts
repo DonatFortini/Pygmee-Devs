@@ -32,7 +32,7 @@ monaco.languages.registerCompletionItemProvider('dnl', {
                     endColumn: wordInfo.endColumn,
                 },
             }));
-        console.log({ filteredSuggestions });
+       
         return {
             suggestions: filteredSuggestions,
         };

@@ -1,13 +1,15 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { confirm, open } from '@tauri-apps/api/dialog';
 import "./public/App.css";
-import { parseCodeToGraph } from "./script/graphGenerator";
+import { code_to_parse, parseCodeToGraph, updateGraph } from "./script/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
 import { useEffect } from "react";
 import * as monaco from 'monaco-editor';
-import {createMonacoEditor} from './script/ide'
+import { createMonacoEditor } from './script/ide'
+import { module_factory, link_factory } from './script/graph'
 import { WebviewWindow } from '@tauri-apps/api/window'
+
 
 /**variable globales c'est pas bien mais bon on fait comme on peut*/
 var curent_file: string = "";
@@ -40,6 +42,28 @@ async function initCodeDisplay(filepath: string) {
     .then(data => {
       editor = createMonacoEditor();
       editor.setValue(data);
+      editor.onKeyDown((event) => {
+        if (event.keyCode == 6) {
+          var result = updateGraph(code_to_parse(editor.getValue()), graph);
+          console.log(result);
+          for (const mod of result.mods) {
+            var m=module_factory(mod.name, mod.time);
+            graph.addCell(m);
+          }
+          for (const lin of result.links) {
+            if (lin.type == "output") {
+              console.log(graph.getCell(lin.source));
+              
+              var l=link_factory(graph.getCell(lin.source) as joint.shapes.basic.Rect, graph.getCell(lin.target) as joint.shapes.basic.Rect, "!" + lin.name);
+              graph.addCell(l);
+            }
+            else {
+              var l=link_factory(graph.getCell(lin.source) as joint.shapes.basic.Rect, graph.getCell(lin.target) as joint.shapes.basic.Rect, "?"+lin.name);
+              graph.addCell(l);
+            }
+          }
+        }
+      })
     });
 }
 
@@ -69,7 +93,7 @@ async function initModelDisplay(filepath: string) {
             resizable: false,
             title: mod
           });
-          graph.getCell(mod).attr().cache = { "text": "test" };
+          graph.getCell(mod).attr().code = { "text": "test" };
           console.log(graph.getCell(mod));
         }
       );
@@ -86,7 +110,7 @@ async function initModelDisplay(filepath: string) {
  * qui interagissent avec le graphique
  */
 function Toolbar() {
-  var instance:WebviewWindow;
+  var instance: WebviewWindow;
   function createWebview(url: string, titre: string) {
     const webview = new WebviewWindow('theUniqueLabel', {
       url: url,
@@ -99,7 +123,7 @@ function Toolbar() {
   }
 
   function add_link() {
-    instance=createWebview("./src/html/form_link.html","Ajout lien");
+    instance = createWebview("./src/html/form_link.html", "Ajout lien");
 
   }
 
@@ -112,7 +136,7 @@ function Toolbar() {
   }
 
   function add_modl() {
-    instance=createWebview("./src/html/form_modl.html","Ajout module");
+    instance = createWebview("./src/html/form_modl.html", "Ajout module");
   }
 
   return (
@@ -160,7 +184,6 @@ function Menu() {
   return (
     <div className="menu">
       <button onClick={new_fichier}>nouveau modèle</button>
-      <button>creer une librairie</button>
       <button onClick={load_fichier}>ouvrir un modèle atomique</button>
     </div>
   );

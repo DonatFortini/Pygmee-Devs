@@ -18,7 +18,7 @@ function module_factory(name: string, time = Infinity, pos = { x: 0, y: 0 }): jo
         attrs: {
             rect: { fill: '#FFFFFF', stroke: '#000000', 'stroke-width': 2 },
             text: { text: name + "\n" + timeString, 'font-size': 10, 'text-anchor': 'middle', 'y-alignment': 'middle', fill: '#000000' },
-            cache: {},
+            code: {},
             name:{name}
         },
         id: name,
@@ -44,7 +44,8 @@ function link_factory(rect1: joint.shapes.basic.Rect, rect2: joint.shapes.basic.
         target: { id: rect2.id },
         labels: [
             { position: 0.5, attrs: { text: { text: labelText } } }
-        ]
+        ],
+        id:labelText
     });
 
 
