@@ -29,8 +29,7 @@
     form.addEventListener('click', () => {
         const nom = document.getElementById('nom').value;
         const temps = eval(document.getElementById('temps').value); 
-        console.log(nom, temps);
-
+        
         invoke('add_mod', { name: nom, time: temps });
     })
 </script>

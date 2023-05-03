@@ -1,7 +1,24 @@
-import { module_factory, link_factory ,start} from './graph';
+import { module_factory, link_factory, start } from './graph';
 import * as joint from 'jointjs';
 
-export { parseCodeToGraph ,code_to_parse,updateGraph}
+export { parseCodeToGraph, code_to_parse, updateGraph }
+
+interface Module {
+    name: string
+    time: number
+}
+
+interface Link {
+    name: string
+    type: string
+    source: string
+    target: string
+}
+
+interface ListeObjets {
+    modules: Module[]
+    links: Link[]
+}
 
 
 /**
@@ -9,7 +26,7 @@ export { parseCodeToGraph ,code_to_parse,updateGraph}
  *et les liens, une fois trouvés elle les instancient et les ajoutent
  *au diagramme
  * 
- * @param code Le code qui est display dans l'editeur.
+ * @param code:string Le code qui est display dans l'editeur.
  * @returns Un objet `joint.dia.Graph` représentant le Graphique.
  */
 function parseCodeToGraph(code: string): joint.dia.Graph {
@@ -17,27 +34,22 @@ function parseCodeToGraph(code: string): joint.dia.Graph {
     const graph = new joint.dia.Graph();
 
     const res = code_to_parse(code);
-    const modules = res.modules;
-    const links = res.links;
+    const modules: Module[] = res.modules;
+    const links: Link[] = res.links;
 
     let x = 10;
     let y = 10;
     let premier: boolean = true;
     for (const iter of modules) {
+        const m = module_factory(iter.name, iter.time, { x, y });
         if (premier) {
-            var m = module_factory(iter.name, iter.time, { x, y });
-            const startmod=start(m);
+            const startmod = start(m);
             m.embed(startmod);
-            graph.addCells([startmod,m])
-            x += 100;
-            premier=false;
+            graph.addCells([startmod, m])
+            premier = false;
         }
-        else {
-            var m = module_factory(iter.name, iter.time, { x, y });
-            graph.addCell(m);
-            x += 100;
-        }
-
+        else { graph.addCell(m); }
+        x += 100;
     }
 
 
@@ -45,13 +57,8 @@ function parseCodeToGraph(code: string): joint.dia.Graph {
         const module1 = graph.getCell(iter.source) as joint.shapes.basic.Rect;
         const module2 = graph.getCell(iter.target) as joint.shapes.basic.Rect;
         let label: string;
-        if (iter.type == 'input') {
-            label = "?" + iter.name
-        }
-        else {
-            label = "!" + iter.name
-        }
-
+        if (iter.type == 'input') { label = "?" + iter.name }
+        else { label = "!" + iter.name }
 
         const m = link_factory(module1, module2, label);
         graph.addCell(m);
@@ -60,12 +67,16 @@ function parseCodeToGraph(code: string): joint.dia.Graph {
     return graph;
 }
 
-
-function code_to_parse(code: string) {
+/**
+ * retourne la liste des modules et liens detecté lors du parsing
+ * @param code:string 
+ * @returns ListeObjets contenant les modules et liens
+ */
+function code_to_parse(code: string): ListeObjets {
     //recherche des modules
     const modulesRegex = /hold in (.+?) for time (\d+)|passivate in (\w+)/g;
     let match;
-    const modules: { name: string; time: number }[] = [];
+    const modules: Module[] = [];
     // Boucle sur les correspondances trouvées par la regex pour extraire les noms et temps des modules
     while ((match = modulesRegex.exec(code)) !== null) {
         const [_, name, timeStr, target, passivate] = match;
@@ -79,14 +90,12 @@ function code_to_parse(code: string) {
         }
     }
 
-
-
     //recherche des liens
     const link_name_typeregex = /input on (\w+)|output on (\w+)/g;
     const link_start_regex = /when in (\w+) and receive (\w+)|after (\w+) output (\w+)/g;
     const link_transition_regex = /(\w+) go to (\w+)/g;
 
-    const links: { name: string; type: string; source: string; target: string; }[] = [];
+    const links: Link[] = [];
 
     let source: string = '';
     let target: string = '';
@@ -135,34 +144,39 @@ function code_to_parse(code: string) {
 
     }
 
-    //console.log({ modules, links });
-    return { modules, links };
+    const liste: ListeObjets = { modules, links }
+
+    return liste;
 }
 
+/**
+ * 
+ * @param uparray:ListeObjets la liste actuelle des objets present dans le code
+ * @param graph:`joint.dia.Graph` le Graphique.
+ * @returns ListeObjets contenant les nouveaux modules et liens a implementer
+ */
+function updateGraph(uparray: ListeObjets, graph: joint.dia.Graph): ListeObjets {
+    var modules: Module[] = uparray.modules;
+    var links: Link[] = uparray.links;
 
-function updateGraph(uparray: { modules: { name: string; time: number }[], links: { name: string; type: string; source: string; target: string; }[]},graph:joint.dia.Graph){
-    var mods=uparray.modules;
-    var links=uparray.links;
+    for (const iter of modules) {
+        if (graph.getCell(iter.name)) { modules = modules.filter((elem, i) => elem !== iter); }
+    }
 
-    for(const iter of mods){
-        if(graph.getCell(iter.name)){
-            mods=mods.filter((elem,i)=> elem!== iter);
+    for (const iter of links) {
+        if (iter.type == "output") {
+            if (graph.getCell("!" + iter.name)) {
+                links = links.filter((elem, i) => elem !== iter);
+            }
+        }
+        else if (iter.type == "input") {
+            if (graph.getCell("?" + iter.name)) {
+                links = links.filter((elem, i) => elem !== iter);
+            }
         }
     }
 
-    for(const iter of links){
-        if(iter.type=="output"){
-            if(graph.getCell("!"+iter.name)){
-            links=links.filter((elem,i) => elem!== iter);
-            }
-        }
-        else if(iter.type=="input"){
-            if(graph.getCell("?"+iter.name)){
-            links=links.filter((elem,i) => elem!== iter);
-            }
-        }
-        
-    }
+    const newListe: ListeObjets = { modules, links };
 
-    return {mods,links}
+    return newListe;
 }

@@ -20,7 +20,7 @@ var paper: joint.dia.Paper;
 
 /**fonction global appelé par le back-end qui permet de crée des liens depuis le graphique  */
 window.verifLink = (type: string, name: string, source: string, target: string) => {
-  if (graph) {
+  if (graph) {//TODO securiser la creation des lien (modules non existant)
     if (graph.getCell(name)) { alert("lien deja existant"); }
     else {
       var textToAppend: string;
@@ -63,6 +63,23 @@ window.verifMod = (name: string, time:number) => {
 }
 
 /**
+ * permet d'initaliser des fenêtres d'interaction a partir d'un url
+ * @param url:string lien vers un formulaire html 
+ * @param titre:string titre de la fenêtre 
+ * @returns instance de webview
+ */
+function createWebview(url: string, titre: string) {
+  const webview = new WebviewWindow('theUniqueLabel', {
+    url: url,
+    width: 400,
+    height: 200,
+    resizable: false,
+    title: titre
+  });
+  return webview;
+}
+
+/**
  * ajoute le nom du fichier en cours au label
  * @param choice le nom du fichier actuellement chargé
  */
@@ -90,7 +107,7 @@ async function initCodeDisplay(filepath: string) {
         if (event.keyCode == 6) {
           var result = updateGraph(code_to_parse(editor.getValue()), graph);
           console.log(result);
-          for (const mod of result.mods) {
+          for (const mod of result.modules) {
             var m = module_factory(mod.name, mod.time);
             graph.addCell(m);
           }
@@ -128,15 +145,10 @@ async function initModelDisplay(filepath: string) {
       paper.on(' cell:pointerdblclick',
         function (cellView: { model: { id: string; }; }) {
           let mod = cellView.model.id;
-          const webview = new WebviewWindow('theUniqueLabel', {
-            url: './src/html/code.html',
-            width: 400,
-            height: 200,
-            resizable: false,
-            title: mod,
-          });
+          const webview = createWebview('./src/html/code.html',mod);
+          /** 
           graph.getCell(mod).attr().code = { "text": "test" };
-          console.log(graph.getCell(mod));
+          console.log(graph.getCell(mod));*/
         }
       );
     })
@@ -153,37 +165,21 @@ async function initModelDisplay(filepath: string) {
  */
 function Toolbar() {
   var instance: WebviewWindow;
-  function createWebview(url: string, titre: string) {
-    const webview = new WebviewWindow('theUniqueLabel', {
-      url: url,
-      width: 400,
-      height: 200,
-      resizable: false,
-      title: titre
-    });
-    return webview;
-  }
-
+  
   function add_link() {
     instance = createWebview("./src/html/form_link.html", "Ajout lien");
   }
 
-  async function del_link() {
-
+  function del_link() {
+    //TODO implementer pour le futur
   }
 
   function del_modl() {
-
+    //TODO implementer pour le futur
   }
 
   function add_modl() {
     instance = createWebview("./src/html/form_modl.html", "Ajout module");
-    instance.listen('formSubmit', (eventData: unknown) => {
-      const formData = eventData as FormData;
-      const username = formData.get('username');
-      const password = formData.get('password');
-      console.log('Form Data:', formData);
-    });
   }
 
   return (
@@ -216,6 +212,9 @@ function Menu() {
     }
   }
 
+  /**
+   * créer un nouveau fichier et le charge
+   */
   async function new_fichier() {
     const res: string | null = prompt('nom du fichier:');
     if (res) {
@@ -237,12 +236,12 @@ function Menu() {
 
 function ExportButton() {
   /**
-   * enregistre le fichier final dnas le dossier téléchargements
+   * enregistre le fichier final dans le dossier téléchargements
    */
   async function finish() {
     let conf = await confirm('êtes-vous sûr de vouloir finir', 'Exporter');
     if (conf) {
-      console.log("true");
+      //TODO 
     }
   }
 
@@ -332,6 +331,9 @@ function App() {
     };
   }, []);
 
+  /**
+   * enregistre le contenu de l'editeur dans le fichier en cours
+   */
   async function SaveDoc() {
     const reponse = await confirm('etes vous sûr de sauvegarder?');
     if (reponse && editor.getValue() != undefined) {
