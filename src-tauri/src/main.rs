@@ -101,8 +101,14 @@ fn add_link(types: String, name: String, source: String, target: String) {
 }
 
 #[tauri::command]
-fn add_mod(name: String, time: i32) {
+fn add_mod(name: String, time:i32) {
     println!("{} {}", name, time);
+    let eval_string = format!(
+        "verifMod('{}', '{}')",
+        name , time
+    );
+    let main_window = get_main_window().expect("Main window not set");
+    main_window.eval(&eval_string).unwrap();
 }
 
 fn main() {

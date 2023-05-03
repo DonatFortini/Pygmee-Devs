@@ -18,6 +18,7 @@ var graph: joint.dia.Graph;
 var editor: monaco.editor.IStandaloneCodeEditor;
 var paper: joint.dia.Paper;
 
+/**fonction global appelé par le back-end qui permet de crée des liens depuis le graphique  */
 window.verifLink = (type: string, name: string, source: string, target: string) => {
   if (graph) {
     if (graph.getCell(name)) { alert("lien deja existant"); }
@@ -35,6 +36,28 @@ window.verifLink = (type: string, name: string, source: string, target: string) 
       appendTextToEditor(editor, textToAppend);
       var l = link_factory(graph.getCell(source) as joint.shapes.basic.Rect, graph.getCell(target) as joint.shapes.basic.Rect, nom);
       graph.addCell(l);
+    }
+  } else { alert("aucun editeur chargé") }
+}
+
+/**fonction global appelé par le back-end qui permet de crée des liens depuis le graphique  */
+window.verifMod = (name: string, time:number) => {
+  if (graph) {
+    if (graph.getCell(name)) { alert("lien deja existant"); }
+    else {
+      var textToAppend: string;
+      var tmp:number;
+      if (time == -1) {
+        textToAppend = `passivate in ${name}!`;
+        tmp=Infinity;
+      }
+      else {
+        textToAppend = `hold in ${name} for time ${time}`;
+        tmp=time;
+      }
+      appendTextToEditor(editor, textToAppend);
+      var m = module_factory(name,tmp)
+      graph.addCell(m);
     }
   } else { alert("aucun editeur chargé") }
 }
@@ -110,7 +133,7 @@ async function initModelDisplay(filepath: string) {
             width: 400,
             height: 200,
             resizable: false,
-            title: mod
+            title: mod,
           });
           graph.getCell(mod).attr().code = { "text": "test" };
           console.log(graph.getCell(mod));
