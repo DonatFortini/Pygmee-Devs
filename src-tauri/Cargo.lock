@@ -1836,6 +1836,7 @@ dependencies = [
 name = "pygmee"
 version = "0.0.0"
 dependencies = [
+ "lazy_static",
  "pyo3",
  "serde",
  "serde_json",

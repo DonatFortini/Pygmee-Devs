@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor';
-export { createMonacoEditor }
+export { createMonacoEditor ,appendTextToEditor}
 
 /**definie la syntaxe de base du dnl */
 monaco.languages.register({
@@ -32,7 +32,7 @@ monaco.languages.registerCompletionItemProvider('dnl', {
                     endColumn: wordInfo.endColumn,
                 },
             }));
-       
+
         return {
             suggestions: filteredSuggestions,
         };
@@ -80,8 +80,8 @@ function createMonacoEditor() {
         colors: {
             'editor.background': '#9FA2B2',
             'editorSuggestWidget.background': '#9FA2B2',
-            'editorSuggestWidget.foreground': '#000000', 
-            'editorSuggestWidget.selectedBackground': '#A0A0A0', 
+            'editorSuggestWidget.foreground': '#000000',
+            'editorSuggestWidget.selectedBackground': '#A0A0A0',
             'editorSuggestWidget.highlightForeground': '#0000FF',
         }
     });
@@ -96,4 +96,23 @@ function createMonacoEditor() {
     });
 
     return editor;
+}
+
+function appendTextToEditor(editor: monaco.editor.IStandaloneCodeEditor, text:string) {
+    const model = editor.getModel();
+    const currentPosition = model!.getPositionAt(model!.getValueLength());
+    const range = new monaco.Range(
+        currentPosition.lineNumber,
+        currentPosition.column,
+        currentPosition.lineNumber,
+        currentPosition.column
+    );
+    const editOperation = {
+        range: range,
+        text: `\n${text}`
+    };
+    model!.pushEditOperations([], [editOperation], () => { 
+        return null;
+    });
+    editor.revealPositionInCenter(currentPosition);
 }

@@ -4,11 +4,12 @@ import "./public/App.css";
 import { code_to_parse, parseCodeToGraph, updateGraph } from "./script/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import * as monaco from 'monaco-editor';
-import { createMonacoEditor } from './script/ide'
+import { createMonacoEditor, appendTextToEditor } from './script/ide'
 import { module_factory, link_factory } from './script/graph'
 import { WebviewWindow } from '@tauri-apps/api/window'
+
 
 
 /**variable globales c'est pas bien mais bon on fait comme on peut*/
@@ -17,6 +18,26 @@ var graph: joint.dia.Graph;
 var editor: monaco.editor.IStandaloneCodeEditor;
 var paper: joint.dia.Paper;
 
+window.verifLink = (type: string, name: string, source: string, target: string) => {
+  if (graph) {
+    if (graph.getCell(name)) { alert("lien deja existant"); }
+    else {
+      var textToAppend: string;
+      var nom:string;
+      if (type == "output") {
+        textToAppend = `generates output on ${name}!\nafter ${source} ${type} ${name}!\nfrom ${source} go to ${target}!`;
+        nom="!"+name;
+      }
+      else {
+        textToAppend = `accepts input on ${name}!\nwhen in ${source} and receive ${name} go to ${target}!`;
+        nom="?"+name;
+      }
+      appendTextToEditor(editor, textToAppend);
+      var l = link_factory(graph.getCell(source) as joint.shapes.basic.Rect, graph.getCell(target) as joint.shapes.basic.Rect, nom);
+      graph.addCell(l);
+    }
+  } else { alert("aucun editeur chargé") }
+}
 
 /**
  * ajoute le nom du fichier en cours au label
@@ -120,19 +141,12 @@ function Toolbar() {
     return webview;
   }
 
-
   function add_link() {
     instance = createWebview("./src/html/form_link.html", "Ajout lien");
-    instance.listen('formSubmit', (eventData: unknown) => {
-      const formData = eventData as FormData;
-      const username = formData.get('username');
-      const password = formData.get('password');
-      console.log('Form Data:', formData);
-    });
   }
 
   async function del_link() {
-    
+
   }
 
   function del_modl() {
@@ -302,6 +316,8 @@ function App() {
       await invoke('save', { currentFile: curent_file, text: text });
     }
   }
+
+
 
   return (
     <div style={{ display: 'flex', height: '100vh', }}>

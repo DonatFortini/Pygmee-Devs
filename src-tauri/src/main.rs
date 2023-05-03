@@ -1,12 +1,23 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use lazy_static::lazy_static;
 use pyo3::prelude::*;
 use serde::{Serialize, Serializer};
-use std::{path::Path, io::Write, fs};
-use tauri::{command::private::ResultKind};
+use std::{fs, io::Write, path::Path, sync::Mutex};
+use tauri::{command::private::ResultKind, Manager};
 
+lazy_static! {
+    static ref MAIN_WINDOW: Mutex<Option<tauri::Window>> = Mutex::new(None);
+}
 
+fn get_main_window() -> Option<tauri::Window> {
+    (*MAIN_WINDOW.lock().unwrap()).clone()
+}
+
+fn set_main_window(window: tauri::Window) {
+    *MAIN_WINDOW.lock().unwrap() = Some(window);
+}
 /*
 gestion des erreur python
  */
@@ -31,7 +42,6 @@ impl Serialize for MyError {
 }
 
 /**/
-
 
 /*fonction de copy des fichier je l'appelle pour copier les fichiers recuperés par le bouton import du coté front
 pour les avoir dans mon dossier simulation pour que l'utilisateur puisse se créer une biblioteque*/
@@ -60,48 +70,51 @@ fn copy_files(files: Vec<String>) {
     }
 }
 
-
 #[tauri::command]
 fn save(current_file: String, text: String) {
     let path = Path::new(&current_file);
-
-    // Open the file in write-only mode, creating it if it doesn't exist
     if let Ok(mut file) = fs::File::create(path) {
-        // Truncate the file to 0 bytes
         if let Ok(_) = file.set_len(0) {
-            // Write the text to the file
             let _ = file.write_all(text.as_bytes());
         }
     }
 }
 
 #[tauri::command]
-fn new_file(filename:String)->String{
+fn new_file(filename: String) -> String {
     let simulation_dir = std::env::current_dir().unwrap().join("simulation");
-    let path = simulation_dir.join(filename+".dnl");
-    let cloned_path = path.clone(); 
-    let _=fs::File::create(&path);
+    let path = simulation_dir.join(filename + ".dnl");
+    let cloned_path = path.clone();
+    let _ = fs::File::create(&path);
     cloned_path.to_string_lossy().to_string()
 }
 
 #[tauri::command]
-fn test(){
-    println!("oui");
+fn add_link(types: String, name: String, source: String, target: String) {
+    println!("{} {} {} {}", types, name, source, target);
+    let eval_string = format!(
+        "verifLink('{}', '{}', '{}', '{}')",
+        types, name, source, target
+    );
+    let main_window = get_main_window().expect("Main window not set");
+    main_window.eval(&eval_string).unwrap();
 }
 
 #[tauri::command]
-fn add_link(types:String,name:String,source:String,target:String){
-    println!("{} {} {} {}",types,name,source,target);
-}
-
-#[tauri::command]
-fn add_mod(name:String,time:i32){
-    println!("{} {}",name,time);
+fn add_mod(name: String, time: i32) {
+    println!("{} {}", name, time);
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![copy_files,save,new_file,test,add_link,add_mod]) //gestion de l'invoke
+        .setup(|app| {
+            let main_window = app.get_window("main").unwrap();
+            set_main_window(main_window);
+            Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![
+            copy_files, save, new_file, add_link, add_mod
+        ]) //gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
