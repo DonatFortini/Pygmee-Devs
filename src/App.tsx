@@ -9,6 +9,7 @@ import * as monaco from 'monaco-editor';
 import { createMonacoEditor, appendTextToEditor } from './script/ide'
 import { module_factory, link_factory } from './script/graph'
 import { WebviewWindow } from '@tauri-apps/api/window'
+import { listen,emit } from '@tauri-apps/api/event'
 
 
 
@@ -24,14 +25,14 @@ window.verifLink = (type: string, name: string, source: string, target: string) 
     if (graph.getCell(name)) { alert("lien deja existant"); }
     else {
       var textToAppend: string;
-      var nom:string;
+      var nom: string;
       if (type == "output") {
         textToAppend = `generates output on ${name}!\nafter ${source} ${type} ${name}!\nfrom ${source} go to ${target}!`;
-        nom="!"+name;
+        nom = "!" + name;
       }
       else {
         textToAppend = `accepts input on ${name}!\nwhen in ${source} and receive ${name} go to ${target}!`;
-        nom="?"+name;
+        nom = "?" + name;
       }
       appendTextToEditor(editor, textToAppend);
       var l = link_factory(graph.getCell(source) as joint.shapes.basic.Rect, graph.getCell(target) as joint.shapes.basic.Rect, nom);
@@ -41,25 +42,37 @@ window.verifLink = (type: string, name: string, source: string, target: string) 
 }
 
 /**fonction global appelé par le back-end qui permet de crée des liens depuis le graphique  */
-window.verifMod = (name: string, time:number) => {
+window.verifMod = (name: string, time: number) => {
   if (graph) {
     if (graph.getCell(name)) { alert("lien deja existant"); }
     else {
       var textToAppend: string;
-      var tmp:number;
+      var tmp: number;
       if (time == -1) {
         textToAppend = `passivate in ${name}!`;
-        tmp=Infinity;
+        tmp = Infinity;
       }
       else {
         textToAppend = `hold in ${name} for time ${time}`;
-        tmp=time;
+        tmp = time;
       }
       appendTextToEditor(editor, textToAppend);
-      var m = module_factory(name,tmp)
+      var m = module_factory(name, tmp)
       graph.addCell(m);
     }
   } else { alert("aucun editeur chargé") }
+}
+
+
+listen('get-cache', (event:any) => {
+  const label = event.payload.message;
+  const result = graph.getCell(label).attr().code.text;
+  emit('get-cache-result', result);
+});
+
+window.setCache=(label:string,content:string)=>{
+  graph.getCell(label).attr().code={text:content};
+  console.log(graph.getCell(label).attr().code.text);
 }
 
 /**
@@ -69,7 +82,7 @@ window.verifMod = (name: string, time:number) => {
  * @returns instance de webview
  */
 function createWebview(url: string, titre: string) {
-  const webview = new WebviewWindow('theUniqueLabel', {
+  const webview = new WebviewWindow(titre, {
     url: url,
     width: 400,
     height: 200,
@@ -145,7 +158,7 @@ async function initModelDisplay(filepath: string) {
       paper.on(' cell:pointerdblclick',
         function (cellView: { model: { id: string; }; }) {
           let mod = cellView.model.id;
-          const webview = createWebview('./src/html/code.html',mod);
+          const webview = createWebview('./src/html/code.html', mod);
           /** 
           graph.getCell(mod).attr().code = { "text": "test" };
           console.log(graph.getCell(mod));*/
@@ -166,8 +179,9 @@ async function initModelDisplay(filepath: string) {
 function Toolbar() {
   var instance: WebviewWindow;
   
+
   function add_link() {
-    instance = createWebview("./src/html/form_link.html", "Ajout lien");
+    instance = createWebview("./src/html/form_link.html", "Ajout_lien");
   }
 
   function del_link() {
@@ -179,7 +193,11 @@ function Toolbar() {
   }
 
   function add_modl() {
-    instance = createWebview("./src/html/form_modl.html", "Ajout module");
+    console.log('ici');
+    
+    instance = createWebview("./src/html/form_modl.html", "Ajout_module");
+    console.log('la');
+    
   }
 
   return (
