@@ -122,7 +122,10 @@
         "icons/icon.ico"
       ],
       "identifier": "",
-      "targets": "all"
+      "targets": "all",
+      "resources": [
+        "./simulation/*"
+      ]
     },
     "security": {
       "csp": null
