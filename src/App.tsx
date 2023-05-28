@@ -1,6 +1,11 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { confirm, open } from '@tauri-apps/api/dialog';
 import "./public/App.css";
+import dellink from './assets/del_link.svg';
+import addlink from './assets/link.svg';
+import delmod from './assets/del_module.svg';
+import addmod from './assets/module.svg';
+import logo from './assets/logo_pygmee.png';
 import { code_to_parse, parseCodeToGraph, updateGraph } from "./script/graphGenerator";
 import * as joint from 'jointjs';
 import { readTextFile } from '@tauri-apps/api/fs';
@@ -9,7 +14,7 @@ import * as monaco from 'monaco-editor';
 import { createMonacoEditor, appendTextToEditor } from './script/ide'
 import { module_factory, link_factory } from './script/graph'
 import { WebviewWindow } from '@tauri-apps/api/window'
-import { listen,emit } from '@tauri-apps/api/event'
+import { listen, emit } from '@tauri-apps/api/event'
 
 
 
@@ -64,15 +69,14 @@ window.verifMod = (name: string, time: number) => {
 }
 
 
-listen('get-cache', (event:any) => {
+listen('get-cache', (event: any) => {
   const label = event.payload.message;
   const result = graph.getCell(label).attr().code.text;
   emit('get-cache-result', result);
 });
 
-window.setCache=(label:string,content:string)=>{
-  graph.getCell(label).attr().code={text:content};
-  console.log(graph.getCell(label).attr().code.text);
+window.setCache = (label: string, content: string) => {
+  graph.getCell(label).attr().code = { text: content };
 }
 
 /**
@@ -83,7 +87,7 @@ window.setCache=(label:string,content:string)=>{
  */
 function createWebview(url: string, titre: string) {
   const webview = new WebviewWindow(titre, {
-    url: url,
+    url:  url,
     width: 400,
     height: 200,
     resizable: false,
@@ -119,7 +123,6 @@ async function initCodeDisplay(filepath: string) {
       editor.onKeyDown((event) => {
         if (event.keyCode == 6) {
           var result = updateGraph(code_to_parse(editor.getValue()), graph);
-          console.log(result);
           for (const mod of result.modules) {
             var m = module_factory(mod.name, mod.time);
             graph.addCell(m);
@@ -159,9 +162,6 @@ async function initModelDisplay(filepath: string) {
         function (cellView: { model: { id: string; }; }) {
           let mod = cellView.model.id;
           const webview = createWebview('./src/html/code.html', mod);
-          /** 
-          graph.getCell(mod).attr().code = { "text": "test" };
-          console.log(graph.getCell(mod));*/
         }
       );
     })
@@ -178,7 +178,7 @@ async function initModelDisplay(filepath: string) {
  */
 function Toolbar() {
   var instance: WebviewWindow;
-  
+
 
   function add_link() {
     instance = createWebview("./src/html/form_link.html", "Ajout_lien");
@@ -193,19 +193,15 @@ function Toolbar() {
   }
 
   function add_modl() {
-    console.log('ici');
-    
     instance = createWebview("./src/html/form_modl.html", "Ajout_module");
-    console.log('la');
-    
   }
 
   return (
     <div className="toolbar">
-      <img src="./src/assets/link.svg" onClick={add_link} className="link" />
-      <img src="./src/assets/module.svg" onClick={add_modl} className="mod" />
-      <img src="./src/assets/del_link.svg" onClick={del_link} className="del_link" />
-      <img src="./src/assets/del_module.svg" onClick={del_modl} className="del_mod" />
+      <img src={addlink} onClick={add_link} className="link" />
+      <img src={addmod} onClick={add_modl} className="mod" />
+      <img src={dellink} onClick={del_link} className="del_link" />
+      <img src={delmod} onClick={del_modl} className="del_mod" />
     </div>
   );
 }
@@ -287,7 +283,7 @@ function Header() {
 
   return (
     <div className="header">
-      <img className='logo' src="./src/assets/logo_pygmee.png" alt="" />
+      <img className='logo' src={logo} alt="" />
       <h1>Pygmee-DEVS</h1>
       <div style={{ display: 'flex', justifyContent: "space-evenly" }}>
         <label id="label" className="label"></label>

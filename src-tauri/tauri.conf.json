@@ -41,7 +41,11 @@
         "removeDir": false,
         "removeFile": true,
         "renameFile": true,
-        "scope": [],
+        "scope": [
+          "$RESOURCE",
+          "$RESOURCE/*",
+          "$APP/*"
+        ],
         "writeFile": true
       },
       "globalShortcut": {
@@ -124,7 +128,8 @@
       "identifier": "",
       "targets": "all",
       "resources": [
-        "./simulation/*"
+        "./simulation/*",
+        "../src/html/*"
       ]
     },
     "security": {
