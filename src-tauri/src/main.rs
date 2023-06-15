@@ -2,9 +2,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use lazy_static::lazy_static;
-use std::{fs, io::Write, path::Path, sync::{Mutex}};
+use std::{fs, io::Write, path::Path, sync::Mutex};
 use tauri::Manager;
-
 
 lazy_static! {
     static ref MAIN_WINDOW: Mutex<Option<tauri::Window>> = Mutex::new(None);
@@ -124,18 +123,23 @@ async fn getcache(label: String) -> String {
         .expect("Failed to emit event");
 
     let result = result_rx.recv().expect("Failed to receive result");
-    println!("{}",result);
+    println!("{}", result);
     result
 }
-
-
-
 
 #[tauri::command]
 fn setcache(label: String, content: String) {
     let eval_string = format!("setCache('{}', '{}')", label, content);
     let main_window = get_main_window().expect("Main window not set");
     main_window.eval(&eval_string).unwrap();
+}
+
+//transcript the dnl code into python advance is the content store in the cache
+#[tauri::command]
+fn transcript(filename: String, advance_content: String) {
+    let download_dir = std::env::current_dir().unwrap().join("simulation");
+    let path = download_dir.join(filename + ".dnl");
+    let _ = fs::File::create(&path);
 }
 
 fn main() {
