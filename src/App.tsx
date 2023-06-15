@@ -255,7 +255,7 @@ function ExportButton() {
   async function finish() {
     let conf = await confirm('êtes-vous sûr de vouloir finir', 'Exporter');
     if (conf) {
-      //TODO 
+      // TODO finir le projet connard
     }
   }
 

@@ -38,7 +38,7 @@
                 const but = document.getElementById('but');
                 but.addEventListener('click', () => {
                     const content = editor.getValue();
-                    invoke('setcache',{label:windows, content:content}); 
+                    invoke('setcache',{label:windows, content:content}).then(window.close()); 
                 });
 
             }).catch(error => {

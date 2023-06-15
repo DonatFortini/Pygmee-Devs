@@ -30,7 +30,7 @@
         const nom = document.getElementById('nom').value;
         const temps = eval(document.getElementById('temps').value); 
         
-        invoke('add_mod', { name: nom, time: temps });
+        invoke('add_mod', { name: nom, time: temps }).then(window.close());
     })
 </script>
 

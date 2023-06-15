@@ -41,7 +41,7 @@
         const name = document.getElementById('nom').value;
         const source = document.getElementById('source').value;
         const target = document.getElementById('cible').value;
-        invoke('add_link', { types: type, name: name, source: source, target: target });
+        invoke('add_link', { types: type, name: name, source: source, target: target }).then(window.close());
     })
 
 
