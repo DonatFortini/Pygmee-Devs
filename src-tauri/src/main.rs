@@ -4,8 +4,6 @@
 use lazy_static::lazy_static;
 use std::{fs, io::Write, path::Path, sync::Mutex};
 use tauri::Manager;
-use tauri::api::Error;
-
 
 lazy_static! {
     static ref MAIN_WINDOW: Mutex<Option<tauri::Window>> = Mutex::new(None);
@@ -140,11 +138,14 @@ fn setcache(label: String, content: String) {
 
 //transcript the dnl code into python advance is the content store in the cache
 #[tauri::command]
-fn transcript(filename: String, advance_content: String){
+fn transcript(filename: String, advance_content: String)-> Result<(), xdg_user::Error>{
     //create the file in the dowload
     let path = xdg_user::UserDirs::new()?;
-    let _ = fs::File::create(&path);
+    let fpath=path.downloads().unwrap().join(filename+".py");
+    let _ = fs::File::create(&fpath);
     //transpile the dnl into python code
+    
+    Ok(())
 }
 
 fn main() {
