@@ -4,6 +4,8 @@
 use lazy_static::lazy_static;
 use std::{fs, io::Write, path::Path, sync::Mutex};
 use tauri::Manager;
+use tauri::api::Error;
+
 
 lazy_static! {
     static ref MAIN_WINDOW: Mutex<Option<tauri::Window>> = Mutex::new(None);
@@ -16,6 +18,8 @@ fn get_main_window() -> Option<tauri::Window> {
 fn set_main_window(window: tauri::Window) {
     *MAIN_WINDOW.lock().unwrap() = Some(window);
 }
+
+
 
 /*
 gestion des erreur python
@@ -136,10 +140,11 @@ fn setcache(label: String, content: String) {
 
 //transcript the dnl code into python advance is the content store in the cache
 #[tauri::command]
-fn transcript(filename: String, advance_content: String) {
-    let download_dir = std::env::current_dir().unwrap().join("simulation");
-    let path = download_dir.join(filename + ".dnl");
+fn transcript(filename: String, advance_content: String){
+    //create the file in the dowload
+    let path = xdg_user::UserDirs::new()?;
     let _ = fs::File::create(&path);
+    //transpile the dnl into python code
 }
 
 fn main() {
