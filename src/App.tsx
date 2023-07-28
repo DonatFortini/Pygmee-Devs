@@ -1,10 +1,6 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { confirm, open } from '@tauri-apps/api/dialog';
 import "./public/App.css";
-import dellink from './assets/del_link.svg';
-import addlink from './assets/link.svg';
-import delmod from './assets/del_module.svg';
-import addmod from './assets/module.svg';
 import logo from './assets/logo_pygmee.png';
 import { code_to_parse, parseCodeToGraph, updateGraph } from "./script/graphGenerator";
 import * as joint from 'jointjs';
@@ -15,7 +11,6 @@ import { createMonacoEditor, appendTextToEditor } from './script/ide'
 import { module_factory, link_factory } from './script/graph'
 import { WebviewWindow } from '@tauri-apps/api/window'
 import { listen, emit } from '@tauri-apps/api/event'
-
 
 
 /**variable globales c'est pas bien mais bon on fait comme on peut*/
@@ -87,7 +82,7 @@ window.setCache = (label: string, content: string) => {
  */
 function createWebview(url: string, titre: string) {
   const webview = new WebviewWindow(titre, {
-    url:  url,
+    url: url,
     width: 400,
     height: 200,
     resizable: false,
@@ -149,39 +144,33 @@ async function initCodeDisplay(filepath: string) {
  *@param filepath chemin du fichier selectioné dans la fenêtre de dialogue 
  */
 async function initModelDisplay(filepath: string) {
+  let webview: WebviewWindow;
   readTextFile(filepath)
     .then(data => {
       graph = parseCodeToGraph(data);
       paper = new joint.dia.Paper({
         el: document.getElementById("modelDisplay"),
         model: graph,
-        height: '100%',
-        width: '100%'
+        height: '70%',
+        width: '60%'
       });
       paper.on(' cell:pointerdblclick',
         function (cellView: { model: { id: string; }; }) {
           let mod = cellView.model.id;
-          const webview = createWebview('./src/html/code.html', mod);
+          webview = createWebview('./src/html/code.html', mod);
         }
       );
+      paper.on('cell:contextmenu', () => { console.log('la'); });
+      paper.on('blank:contextmenu', (event) => {
+        //TODO contextmenu
+      });
     })
     .catch(error => {
       console.error(error);
     });
-}
-
-
-/**
- * 
- * crée une barre d'outil comportant plusieurs boutons
- * qui interagissent avec le graphique
- */
-function Toolbar() {
-  var instance: WebviewWindow;
-
 
   function add_link() {
-    instance = createWebview("./src/html/form_link.html", "Ajout_lien");
+    webview = createWebview("./src/html/form_link.html", "Ajout_lien");
   }
 
   function del_link() {
@@ -193,17 +182,8 @@ function Toolbar() {
   }
 
   function add_modl() {
-    instance = createWebview("./src/html/form_modl.html", "Ajout_module");
+    webview = createWebview("./src/html/form_modl.html", "Ajout_module");
   }
-
-  return (
-    <div className="toolbar">
-      <img src={addlink} onClick={add_link} className="link" />
-      <img src={addmod} onClick={add_modl} className="mod" />
-      <img src={dellink} onClick={del_link} className="del_link" />
-      <img src={delmod} onClick={del_modl} className="del_mod" />
-    </div>
-  );
 }
 
 
@@ -301,10 +281,7 @@ function CodeDisplay() {
 
 function ModelDisplay() {
   return (
-    <div className="model-container">
-      <div id="modelDisplay" className="modelDisplay" ></div>
-      <Toolbar />
-    </div>
+    <div id="modelDisplay" className="modelDisplay" ></div>
   );
 }
 
