@@ -11,6 +11,7 @@ import { createMonacoEditor, appendTextToEditor } from './script/ide'
 import { module_factory, link_factory } from './script/graph'
 import { WebviewWindow } from '@tauri-apps/api/window'
 import { listen, emit } from '@tauri-apps/api/event'
+import {ContextMenu} from './components/contextMenu'
 
 
 /**variable globales c'est pas bien mais bon on fait comme on peut*/
@@ -144,6 +145,7 @@ async function initCodeDisplay(filepath: string) {
  *@param filepath chemin du fichier selectioné dans la fenêtre de dialogue 
  */
 async function initModelDisplay(filepath: string) {
+  
   let webview: WebviewWindow;
   readTextFile(filepath)
     .then(data => {
@@ -154,15 +156,25 @@ async function initModelDisplay(filepath: string) {
         height: '70%',
         width: '60%'
       });
+
+      interface cellView {
+        model: { id: string }
+      }
+
       paper.on(' cell:pointerdblclick',
-        function (cellView: { model: { id: string; }; }) {
-          let mod = cellView.model.id;
-          webview = createWebview('./src/html/code.html', mod);
+        (obj: cellView) => {
+          webview = createWebview('./src/html/code.html', obj.model.id);
         }
       );
-      paper.on('cell:contextmenu', () => { console.log('la'); });
-      paper.on('blank:contextmenu', (event) => {
+      paper.on('cell:contextmenu', (obj:joint.dia.CellView, evt:any,x:number,y:number) => {
+        const items=['supprimer','ajouter'] ;
+        const onClick=(item:string)=>{alert(`${item} was clicked.`);};
+        <ContextMenu items={items} onClick={onClick}/>
+      });
+      paper.on('blank:contextmenu', (event:any,x:number,y:number) => {
         //TODO contextmenu
+        console.log(x,y);
+        
       });
     })
     .catch(error => {
