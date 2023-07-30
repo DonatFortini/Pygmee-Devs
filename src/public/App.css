@@ -10,6 +10,9 @@ button{
   color: #DBC2CF;
   margin-right: 5px;
   background-color: #2E4756;
+  position: absolute;
+  right: 10%;
+  top: 2.5%;
 }
 
 .menu {
@@ -25,13 +28,19 @@ button{
   height: 7%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
   border-bottom: solid white 2px;
   background-color: #1B3542;
 }
 
 .logo{
   width: 5.5rem;
+  position: absolute;
+  left: 12%;
+}
+
+#title{
+  position: absolute;
 }
 
 .mod,.del_mod,.link,.del_link{
@@ -61,7 +70,7 @@ button{
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-between;
   border-right: solid white 2px;
   background-color:#1B3542;
 }
@@ -79,4 +88,25 @@ button{
   justify-content: space-evenly;
   justify-items: center;
   align-items: center;
+}
+
+.burgV{
+  width: 70px;
+  height: 70px;
+  margin-left: 10%;
+}
+
+
+.burgH{
+  width: 60px;
+  height: 60px;
+  display: none;
+  position: absolute;
+  left: 1%;
+}
+
+#import{
+  position: absolute;
+  right: 2%;
+  top: 2%;
 }

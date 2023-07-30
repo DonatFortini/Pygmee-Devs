@@ -22,10 +22,10 @@ function displayContextMenu(options: ContextMenuItem[], x: number, y: number) {
     const menu = document.createElement('ul');
     menu.classList.add('context-menu');
     menu.style.position = 'absolute';
-    
-    menu.style.left =(mainboard!.offsetLeft+ x) + 'px';
-    menu.style.top = (mainboard!.offsetTop+ y) + 'px';
-    
+
+    menu.style.left = (mainboard!.offsetLeft + x) + 'px';
+    menu.style.top = (mainboard!.offsetTop + y) + 'px';
+
     options.forEach((option) => {
         const menuItem = document.createElement('li');
         menuItem.textContent = option.label;
@@ -40,7 +40,7 @@ function displayContextMenu(options: ContextMenuItem[], x: number, y: number) {
     currentContextMenu = menu;
 }
 
-document.addEventListener('click',()=>{if(currentContextMenu)currentContextMenu.style.display='none';});
+document.addEventListener('click', () => { if (currentContextMenu) currentContextMenu.style.display = 'none'; });
 
 /**
  * appele une fonction du front-end qui parse le code du fichier selectioné le renvoi sous forme 

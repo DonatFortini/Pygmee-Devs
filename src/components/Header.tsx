@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/tauri';
-import logo from '../assets/logo_pygmee.png'
-import {open} from '@tauri-apps/api/dialog'
- 
+import logo from '../assets/logo_pygmee.png';
+import {open} from '@tauri-apps/api/dialog';
+import burgH from '../assets/horizontal.svg';
 
 function Header() {
     /**
@@ -20,13 +20,19 @@ function Header() {
         }
     }
 
+    function sideScreen(){
+        document.getElementById('burgH')!.style.display='none';
+        document.getElementById('col')!.style.display='inherit';
+    }
+
     return (
         <div className="header">
+            <img id='burgH' className='burgH' src={burgH} onClick={sideScreen} />
             <img className='logo' src={logo} alt="" />
-            <h1>Pygmee-DEVS</h1>
+            <h1 id='title'>Pygmee-DEVS</h1>
             <div style={{ display: 'flex', justifyContent: "space-evenly" }}>
                 <label id="label" className="label"></label>
-                <button onClick={import_sim} >Importer</button>
+                <button onClick={import_sim} id='import'>Importer</button>
             </div>
         </div>
     );
