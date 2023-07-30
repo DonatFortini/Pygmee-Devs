@@ -1,12 +1,47 @@
 import { readTextFile } from '@tauri-apps/api/fs';
 import { WebviewWindow } from '@tauri-apps/api/window';
-import { ContextMenu } from './contextMenu';
-import * as joint from 'jointjs'
+import * as joint from 'jointjs';
 import { parseCodeToGraph } from '../script/graphGenerator';
 
+import '../public/ContextMenu.css';
 
-export { initModelDisplay ,Graph}
-var Graph:joint.dia.Graph;
+
+export { initModelDisplay, Graph }
+var Graph: joint.dia.Graph;
+
+interface ContextMenuItem {
+    label: string;
+    action: () => void;
+}
+
+let currentContextMenu: HTMLUListElement | null = null;
+
+function displayContextMenu(options: ContextMenuItem[], x: number, y: number) {
+    if (currentContextMenu) currentContextMenu.remove();
+    const mainboard = document.getElementById('modelDisplay');
+    const menu = document.createElement('ul');
+    menu.classList.add('context-menu');
+    menu.style.position = 'absolute';
+    
+    menu.style.left =(mainboard!.offsetLeft+ x) + 'px';
+    menu.style.top = (mainboard!.offsetTop+ y) + 'px';
+    
+    options.forEach((option) => {
+        const menuItem = document.createElement('li');
+        menuItem.textContent = option.label;
+        menuItem.addEventListener('click', () => {
+            option.action();
+            menu.style.display = 'none';
+        });
+        menu.appendChild(menuItem);
+    });
+
+    mainboard!.appendChild(menu);
+    currentContextMenu = menu;
+}
+
+document.addEventListener('click',()=>{if(currentContextMenu)currentContextMenu.style.display='none';});
+
 /**
  * appele une fonction du front-end qui parse le code du fichier selectioné le renvoi sous forme 
  * de diagramme html et le display dans div modelDisplay
@@ -18,7 +53,7 @@ async function initModelDisplay(filepath: string) {
     let webview: WebviewWindow;
     readTextFile(filepath)
         .then(data => {
-            Graph=parseCodeToGraph(data);
+            Graph = parseCodeToGraph(data);
             const paper = new joint.dia.Paper({
                 el: document.getElementById("modelDisplay"),
                 model: Graph,
@@ -36,14 +71,40 @@ async function initModelDisplay(filepath: string) {
                 }
             );
             paper.on('cell:contextmenu', (obj: joint.dia.CellView, evt: any, x: number, y: number) => {
-                const items = ['supprimer', 'ajouter'];
-                const onClick = (item: string) => { alert(`${item} was clicked.`); };
-                <ContextMenu items={items} onClick={onClick} />
+                evt.preventDefault();
+                const contextMenuOptions: ContextMenuItem[] = [
+                    {
+                        label: 'Ajouter un lien',
+                        action: () => {
+                            add_link();
+                        }
+                    },
+                    {
+                        label: 'Supprimer le module',
+                        action: () => {
+                            del_modl('a');
+                        }
+                    }
+                ];
+                displayContextMenu(contextMenuOptions, x, y);
             });
             paper.on('blank:contextmenu', (event: any, x: number, y: number) => {
-                //TODO contextmenu
-                console.log(x, y);
-
+                event.preventDefault();
+                const contextMenuOptions: ContextMenuItem[] = [
+                    {
+                        label: 'Ajouter un module',
+                        action: () => {
+                            add_modl();
+                        }
+                    },
+                    {
+                        label: 'Ajouter un lien',
+                        action: () => {
+                            add_link();
+                        }
+                    }
+                ];
+                displayContextMenu(contextMenuOptions, x, y);
             });
         })
         .catch(error => {
@@ -51,7 +112,7 @@ async function initModelDisplay(filepath: string) {
         });
 
     function add_link() {
-        webview = createWebview("../html/form_link.html", "Ajout_lien");
+        webview = createWebview("./src/html/form_link.html", "Ajout_lien");
     }
 
     function del_link(id: string) {
@@ -62,7 +123,7 @@ async function initModelDisplay(filepath: string) {
     }
 
     function add_modl() {
-        webview = createWebview("../html/form_modl.html", "Ajout_module");
+        webview = createWebview("./src/html/form_modl.html", "Ajout_module");
     }
 }
 
