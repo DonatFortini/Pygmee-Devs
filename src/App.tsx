@@ -18,7 +18,7 @@ import { Graph } from "./components/ModelDisplay";
 import { editor } from "./components/CodeDisplay";
 
 import "./public/App.css";
-import burg from "./assets/vertical.svg"; 
+import burg from "./assets/vertical.svg";
 
 
 
@@ -90,15 +90,15 @@ function App() {
     }
   }
 
-  function fullScreen(){
-    document.getElementById('col')!.style.display='none';
-    document.getElementById('burgH')!.style.display='inherit';
+  function fullScreen() {
+    document.getElementById('col')!.style.display = 'none';
+    document.getElementById('burgH')!.style.display = 'inherit';
   }
 
   return (
     <div style={{ display: 'flex', height: '100vh', }}>
       <div className="column" id="col">
-        <img src={burg} className="burgV" id="burgV" onClick={fullScreen}/>
+        <img src={burg} className="burgV" id="burgV" onClick={fullScreen} />
         <div></div>
         <Menu />
         <ExportButton />
@@ -107,8 +107,8 @@ function App() {
       <div className="main">
         <Header />
         <div className="display">
-            <CodeDisplay />
-            <ModelDisplay />
+          <CodeDisplay />
+          <ModelDisplay />
         </div>
       </div>
     </div>

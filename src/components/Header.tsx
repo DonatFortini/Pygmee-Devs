@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/tauri';
 import logo from '../assets/logo_pygmee.png';
-import {open} from '@tauri-apps/api/dialog';
+import { open } from '@tauri-apps/api/dialog';
 import burgH from '../assets/horizontal.svg';
 
 function Header() {
@@ -20,9 +20,9 @@ function Header() {
         }
     }
 
-    function sideScreen(){
-        document.getElementById('burgH')!.style.display='none';
-        document.getElementById('col')!.style.display='inherit';
+    function sideScreen() {
+        document.getElementById('burgH')!.style.display = 'none';
+        document.getElementById('col')!.style.display = 'inherit';
     }
 
     return (
@@ -38,4 +38,4 @@ function Header() {
     );
 }
 
-export {Header}
+export { Header }

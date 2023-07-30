@@ -1,4 +1,5 @@
 import { confirm } from "@tauri-apps/api/dialog";
+import { invoke } from "@tauri-apps/api";
 
 function ExportButton() {
     /**
@@ -7,7 +8,7 @@ function ExportButton() {
     async function finish() {
         let conf = await confirm('êtes-vous sûr de vouloir finir', 'Exporter');
         if (conf) {
-            // TODO finir le projet connard
+            await invoke('finish',{});
         }
     }
 
@@ -16,4 +17,4 @@ function ExportButton() {
     );
 }
 
-export {ExportButton}
+export { ExportButton }

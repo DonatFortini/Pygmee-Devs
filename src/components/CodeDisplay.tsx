@@ -5,18 +5,18 @@ import { createMonacoEditor } from '../script/ide';
 import { Graph } from './ModelDisplay';
 import * as monaco from 'monaco-editor';
 
-export { initCodeDisplay ,editor}
-var editor:monaco.editor.IStandaloneCodeEditor;
+export { initCodeDisplay, editor }
+var editor: monaco.editor.IStandaloneCodeEditor;
 /**
  * lit le contenu du fichier passer en parametre et initialise un editeur de texte avec le contenu
  * 
  * @param filepath chemin du fichier selectioné dans la fenêtre de dialogue
  */
 async function initCodeDisplay(filepath: string) {
-    if(editor) editor.dispose();
+    if (editor) editor.dispose();
     readTextFile(filepath)
         .then(data => {
-            editor=createMonacoEditor();
+            editor = createMonacoEditor();
             editor.setValue(data);
             editor.onKeyDown((event) => {
                 if (event.keyCode == 6) {
