@@ -70,19 +70,19 @@ async function initModelDisplay(filepath: string) {
                     webview = createWebview('./src/html/code.html', obj.model.id);
                 }
             );
-            paper.on('cell:contextmenu', (obj: joint.dia.CellView, evt: any, x: number, y: number) => {
+            paper.on('cell:contextmenu', (obj:joint.dia.CellView, evt: any, x: number, y: number) => {
                 evt.preventDefault();
                 const contextMenuOptions: ContextMenuItem[] = [
                     {
                         label: 'Ajouter un lien',
                         action: () => {
-                            add_link();
+                            add_link(obj.model.id);
                         }
                     },
                     {
                         label: 'Supprimer le module',
                         action: () => {
-                            del_modl('a');
+                            del_modl(obj.model.id);
                         }
                     }
                 ];
@@ -111,8 +111,8 @@ async function initModelDisplay(filepath: string) {
             console.error(error);
         });
 
-    function add_link() {
-        webview = createWebview("./src/html/form_link.html", "Ajout_lien");
+    function add_link(args:string="") {
+        webview = createWebview(`./src/html/form_link.html?args=${args}`, "Ajout_lien");
     }
 
     function del_link(id: string) {
@@ -137,9 +137,10 @@ function createWebview(url: string, titre: string) {
     const webview = new WebviewWindow(titre, {
         url: url,
         width: 400,
-        height: 200,
+        height: 100,
         resizable: false,
-        title: titre
+        title: titre,
+        focus:true
     });
     return webview;
 }

@@ -13,9 +13,11 @@
 <body>
     <div id="form">
         <div class="container">
-            <div class="cont2">
+            <div class="cont1">
                 <label>nom:</label>
                 <input type="text" id="nom" required>
+            </div>
+            <div class="cont2">
                 <label>temps:</label>
                 <input type="text" id="temps" placeholder="-1 pour Infinity">
             </div>
@@ -28,8 +30,8 @@
     const form = document.getElementById("sub");
     form.addEventListener('click', () => {
         const nom = document.getElementById('nom').value;
-        const temps = eval(document.getElementById('temps').value); 
-        
+        const temps = eval(document.getElementById('temps').value);
+
         invoke('add_mod', { name: nom, time: temps }).then(window.close());
     })
 </script>

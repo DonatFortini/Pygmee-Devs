@@ -33,8 +33,9 @@
 </body>
 <script>
     const { invoke } = window.__TAURI__.tauri
-    
+    const args=new URLSearchParams(window.location.search).get('args')
     const sub = document.getElementById('sub');
+    document.getElementById('source').value=args;
 
     sub.addEventListener('click', () => {
         const type = document.getElementById('type').value;

@@ -1,23 +1,70 @@
-body{
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
     background-color: #1B3542;
 }
 
-input{
-    width: 100px;
+#form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
 }
 
-.container{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
+.container {
+    background-color: #1B3542;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 400px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
-.cont1{
-    display: flex;
-    justify-content: space-between;
+.container label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
 }
 
-.cont2{
-    display: flex;
-    justify-content: space-between;
+.container select,
+.container input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 42px;
+    background-color: #ccc;
+}
+
+.container button {
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    padding: 10px 20px;
+    position: relative;
+    left: 100px;
+    font-size: 16px;
+}
+
+.container button:hover {
+    background-color: #0056b3;
+}
+
+/* Style for form fields that are required */
+.container input:required {
+    border-color: #ff6b6b;
+}
+
+/* Style for form fields that are focused */
+.container input:focus,
+.container select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
 }
