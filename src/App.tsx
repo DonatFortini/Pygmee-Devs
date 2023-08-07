@@ -54,13 +54,13 @@ window.verifMod = (name: string, time: number) => {
 
 
 listen('get-cache', (event: any) => {
-  const label = event.payload.message;
-  const result = Graph.getCell(label).attr().code.text;
+  const label:string = event.payload.message;
+  const result:string = Graph.getCell(label).attr().code.text;
   emit('get-cache-result', result);
 });
 
 window.setCache = (label: string, content: string) => {
-  Graph.getCell(label).attr().code = { text: content };
+  Graph.getCell(label).attr().code.text=content;
 }
 
 function App() {

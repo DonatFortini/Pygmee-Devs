@@ -13,11 +13,14 @@ edition = "2021"
 tauri-build = { version = "1.2", features = [] }
 
 [dependencies]
-tauri = { version = "1.2", features = ["app-all", "dialog-confirm", "dialog-message", "dialog-open", "fs-copy-file", "fs-read-dir", "fs-read-file", "fs-remove-file", "fs-rename-file", "fs-write-file", "path-all", "shell-open", "window-all"] }
+tauri = { version = "1.2.5", features = ["app-all", "dialog-confirm", "dialog-message", "dialog-open", "fs-copy-file", "fs-read-dir", "fs-read-file", "fs-remove-file", "fs-rename-file", "fs-write-file", "path-all", "shell-open", "window-all"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 lazy_static = "1.4"
 xdg-user = "0.2.1"
+snailquote = "0.3.1"
+
+
 
 
 [features]

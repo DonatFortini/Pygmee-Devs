@@ -4,6 +4,7 @@
 use lazy_static::lazy_static;
 use std::{fs, io::Write, path::Path, sync::Mutex};
 use tauri::Manager;
+use snailquote::unescape;
 
 lazy_static! {
     static ref MAIN_WINDOW: Mutex<Option<tauri::Window>> = Mutex::new(None);
@@ -106,7 +107,8 @@ fn add_mod(name: String, time: i32) {
     main_window.eval(&eval_string).unwrap();
 }
 
-#[derive(Clone, serde::Serialize)]
+
+#[derive(serde::Serialize,Clone)]
 struct Payload {
     message: String,
 }
@@ -114,28 +116,25 @@ struct Payload {
 #[tauri::command(async)]
 async fn getcache(label: String) -> String {
     let main_window = get_main_window().expect("Main window not set");
-    let (result_tx, result_rx) = std::sync::mpsc::channel();
-    let _listener = main_window.listen("get-cache-result", move |event| {
-        let result: String = event.payload().expect("Failed to get result").to_owned();
-        result_tx.send(result).expect("Failed to send result");
+    let (sender, receiver) = std::sync::mpsc::channel();
+    main_window.emit("get-cache", Payload { message: label.into() }).unwrap();
+    let listener = main_window.listen("get-cache-result", move |event| {
+        let res = event.payload().expect("failed to get result").to_owned() ;
+        sender.send(res).expect("e");
     });
-
-    main_window
-        .emit("get-cache", Payload { message: label })
-        .expect("Failed to emit event");
-
-    let result = result_rx.recv().expect("Failed to receive result");
-    println!("{}", result);
-    result
+    let res = receiver.recv().expect("error");
+    main_window.unlisten(listener);
+    unescape(&res).unwrap()
 }
 
 #[tauri::command]
 fn setcache(label: String, content: String) {
-    let eval_string = format!("setCache('{}', '{}')", label, content);
+    let eval_string = format!("setCache('{}', `{}`)", label, content);
     let main_window = get_main_window().expect("Main window not set");
     main_window.eval(&eval_string).unwrap();
 }
 
+/* 
 //transcript the dnl code into python advance is the content store in the cache
 #[tauri::command]
 fn transcript(filename: String, advance_content: String)-> Result<(), xdg_user::Error>{
@@ -147,7 +146,7 @@ fn transcript(filename: String, advance_content: String)-> Result<(), xdg_user::
     
     Ok(())
 }
-
+*/
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
