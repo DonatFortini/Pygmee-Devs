@@ -12,7 +12,7 @@ import * as joint from 'jointjs';
 
 import { useEffect } from "react";
 import { appendTextToEditor } from './script/ide';
-import { module_factory, link_factory } from './script/graph';
+import { module_factory, link_factory, start } from './script/graph';
 
 import { Graph } from "./components/ModelDisplay";
 import { editor } from "./components/CodeDisplay";
@@ -42,25 +42,31 @@ window.verifLink = (type: string, name: string, source: string, target: string) 
 
 /**fonction global appelé par le back-end qui permet de crée des liens depuis le graphique  */
 window.verifMod = (name: string, time: number) => {
-  if (Graph.getCell(name)) { alert("lien deja existant"); }
+  if (Graph.getCell(name)) { alert("module déja existant"); }
   else {
     const textToAppend: string = (time == -1) ? `passivate in ${name}!` : `hold in ${name} for time ${time}`;
     const tmp: number = (time == -1) ? Infinity : time;
     appendTextToEditor(editor, textToAppend);
-    const m = module_factory(name, tmp)
-    Graph.addCell(m);
+    const m = module_factory(name, tmp,{x:10,y:10})
+    if (Graph.getCells().length!=0) Graph.addCell(m);
+    else {
+      const startmod = start(m);
+      m.embed(startmod);
+      Graph.addCells([startmod, m])
+    }
+
   }
 }
 
 
 listen('get-cache', (event: any) => {
-  const label:string = event.payload.message;
-  const result:string = Graph.getCell(label).attr().code.text;
+  const label: string = event.payload.message;
+  const result: string = Graph.getCell(label).attr().code.text;
   emit('get-cache-result', result);
 });
 
 window.setCache = (label: string, content: string) => {
-  Graph.getCell(label).attr().code.text=content;
+  Graph.getCell(label).attr().code.text = content;
 }
 
 function App() {
