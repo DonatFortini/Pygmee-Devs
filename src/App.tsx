@@ -30,7 +30,7 @@ var curent_file: string = "";
 /**fonction global appelé par le back-end qui permet de crée des liens depuis le graphique  */
 window.verifLink = (type: string, name: string, source: string, target: string) => {
   //TODO securiser la creation des lien (modules non existant)
-  if (Graph.getCell(name)) { alert("lien deja existant"); }
+  if (Graph.getCell(name)) alert("lien deja existant");
   else {
     const textToAppend: string = (type == 'output') ? `generates output on ${name}!\nafter ${source} ${type} ${name}!\nfrom ${source} go to ${target}!` : `accepts input on ${name}!\nwhen in ${source} and receive ${name} go to ${target}!`;
     const nom: string = (type == 'output') ? "!" + name : "?" + name;
@@ -42,13 +42,13 @@ window.verifLink = (type: string, name: string, source: string, target: string) 
 
 /**fonction global appelé par le back-end qui permet de crée des liens depuis le graphique  */
 window.verifMod = (name: string, time: number) => {
-  if (Graph.getCell(name)) { alert("module déja existant"); }
+  if (Graph.getCell(name)) alert("module déja existant");
   else {
     const textToAppend: string = (time == -1) ? `passivate in ${name}!` : `hold in ${name} for time ${time}`;
     const tmp: number = (time == -1) ? Infinity : time;
     appendTextToEditor(editor, textToAppend);
-    const m = module_factory(name, tmp,{x:10,y:10})
-    if (Graph.getCells().length!=0) Graph.addCell(m);
+    const m = module_factory(name, tmp, { x: 10, y: 10 })
+    if (Graph.getCells().length != 0) Graph.addCell(m);
     else {
       const startmod = start(m);
       m.embed(startmod);
@@ -89,9 +89,9 @@ function App() {
    * enregistre le contenu de l'editeur dans le fichier en cours
    */
   async function SaveDoc() {
-    const reponse = await confirm('etes vous sûr de sauvegarder?');
+    const reponse = await confirm('Etes-vous sûr de sauvegarder?');
     if (reponse && editor.getValue() != undefined) {
-      var text: string = editor.getValue();
+      const text: string = editor.getValue();
       await invoke('save', { currentFile: curent_file, text: text });
     }
   }

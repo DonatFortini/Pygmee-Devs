@@ -44,7 +44,8 @@
         "scope": [
           "$RESOURCE",
           "$RESOURCE/*",
-          "$APP/*"
+          "$APP/*",
+          "**"
         ],
         "writeFile": true
       },

@@ -2,9 +2,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use lazy_static::lazy_static;
+use snailquote::unescape;
 use std::{fs, io::Write, path::Path, sync::Mutex};
 use tauri::Manager;
-use snailquote::unescape;
 
 lazy_static! {
     static ref MAIN_WINDOW: Mutex<Option<tauri::Window>> = Mutex::new(None);
@@ -17,8 +17,6 @@ fn get_main_window() -> Option<tauri::Window> {
 fn set_main_window(window: tauri::Window) {
     *MAIN_WINDOW.lock().unwrap() = Some(window);
 }
-
-
 
 /*
 gestion des erreur python
@@ -107,8 +105,7 @@ fn add_mod(name: String, time: i32) {
     main_window.eval(&eval_string).unwrap();
 }
 
-
-#[derive(serde::Serialize,Clone)]
+#[derive(serde::Serialize, Clone)]
 struct Payload {
     message: String,
 }
@@ -117,9 +114,16 @@ struct Payload {
 async fn getcache(label: String) -> String {
     let main_window = get_main_window().expect("Main window not set");
     let (sender, receiver) = std::sync::mpsc::channel();
-    main_window.emit("get-cache", Payload { message: label.into() }).unwrap();
+    main_window
+        .emit(
+            "get-cache",
+            Payload {
+                message: label.into(),
+            },
+        )
+        .unwrap();
     let listener = main_window.listen("get-cache-result", move |event| {
-        let res = event.payload().expect("failed to get result").to_owned() ;
+        let res = event.payload().expect("failed to get result").to_owned();
         sender.send(res).expect("e");
     });
     let res = receiver.recv().expect("error");
@@ -134,7 +138,7 @@ fn setcache(label: String, content: String) {
     main_window.eval(&eval_string).unwrap();
 }
 
-/* 
+/*
 //transcript the dnl code into python advance is the content store in the cache
 #[tauri::command]
 fn transcript(filename: String, advance_content: String)-> Result<(), xdg_user::Error>{
@@ -143,7 +147,7 @@ fn transcript(filename: String, advance_content: String)-> Result<(), xdg_user::
     let fpath=path.downloads().unwrap().join(filename+".py");
     let _ = fs::File::create(&fpath);
     //transpile the dnl into python code
-    
+
     Ok(())
 }
 */

@@ -3,8 +3,13 @@ import { WebviewWindow } from '@tauri-apps/api/window';
 import * as joint from 'jointjs';
 import { parseCodeToGraph } from '../script/graphGenerator';
 
+//decommenter en build
+/*
+import '../html/form_link.html' ;
+import '../html/form_modl.html' ;
+import '../html/code.html' ;
+*/
 import '../public/ContextMenu.css';
-
 
 export { initModelDisplay, Graph }
 var Graph: joint.dia.Graph;
@@ -70,22 +75,38 @@ async function initModelDisplay(filepath: string) {
                     webview = createWebview('./src/html/code.html', obj.model.id);
                 }
             );
-            paper.on('cell:contextmenu', (obj:joint.dia.CellView, evt: any, x: number, y: number) => {
+            paper.on('cell:contextmenu', (obj: joint.dia.CellView, evt: any, x: number, y: number) => {
                 evt.preventDefault();
-                const contextMenuOptions: ContextMenuItem[] = [
+                console.log(obj);
+
+                const linkContext: ContextMenuItem[] = [
+                    {
+                        label: 'Suprimer le lien',
+                        action: () => {
+                            // @ts-ignore 
+                            del_link(obj.model.id);
+                        }
+                    }
+                ];
+
+                const modContext: ContextMenuItem[] = [
                     {
                         label: 'Ajouter un lien',
                         action: () => {
+                            // @ts-ignore 
                             add_link(obj.model.id);
                         }
                     },
                     {
                         label: 'Supprimer le module',
                         action: () => {
+                            // @ts-ignore 
                             del_modl(obj.model.id);
                         }
                     }
                 ];
+                // @ts-ignore 
+                const contextMenuOptions = (obj.model.attributes.type == "basic.Rect") ? modContext : linkContext;
                 displayContextMenu(contextMenuOptions, x, y);
             });
             paper.on('blank:contextmenu', (event: any, x: number, y: number) => {
@@ -111,7 +132,7 @@ async function initModelDisplay(filepath: string) {
             console.error(error);
         });
 
-    function add_link(args:string="") {
+    function add_link(args: string = "") {
         webview = createWebview(`./src/html/form_link.html?args=${args}`, "Ajout_lien");
     }
 
@@ -140,7 +161,7 @@ function createWebview(url: string, titre: string) {
         height: 100,
         resizable: false,
         title: titre,
-        focus:true
+        focus: true
     });
     return webview;
 }

@@ -56,10 +56,7 @@ function parseCodeToGraph(code: string): joint.dia.Graph {
     for (const iter of links) {
         const module1 = graph.getCell(iter.source) as joint.shapes.basic.Rect;
         const module2 = graph.getCell(iter.target) as joint.shapes.basic.Rect;
-        let label: string;
-        if (iter.type == 'input') { label = "?" + iter.name }
-        else { label = "!" + iter.name }
-
+        const label: string = (iter.type == 'input') ? "?" + iter.name : "!" + iter.name;
         const m = link_factory(module1, module2, label);
         graph.addCell(m);
     }
@@ -85,9 +82,7 @@ function code_to_parse(code: string): ListeObjets {
         // Vérifie si le module est déjà présent dans le tableau de modules
         const isDuplicate = modules.every((m) => m.name !== module.name || m.time !== module.time);
         // Si le module est unique, l'ajoute au tableau de modules
-        if (isDuplicate) {
-            modules.push(module);
-        }
+        if (isDuplicate) modules.push(module);
     }
 
     //recherche des liens
@@ -99,17 +94,10 @@ function code_to_parse(code: string): ListeObjets {
 
     let source: string = '';
     let target: string = '';
-    let type: string;
-    let name: string;
     // Boucle sur les correspondances trouvées par la regex pour extraire les informations des liens
     while ((match = link_name_typeregex.exec(code)) !== null) {
-        if (match[1]) {
-            type = "input";
-            name = match[1];
-        } else {
-            type = "output";
-            name = match[2];
-        }
+        const type: string = (match[1]) ? "input" : "output";
+        const name: string = (match[1]) ? match[1] : match[2];
         // Recherche du module source du lien
         let startMatch: string[] | null;
 
@@ -160,18 +148,18 @@ function updateGraph(uparray: ListeObjets, graph: joint.dia.Graph): ListeObjets 
     var links: Link[] = uparray.links;
 
     for (const iter of modules) {
-        if (graph.getCell(iter.name)) { modules = modules.filter((elem, i) => elem !== iter); }
+        if (graph.getCell(iter.name)) modules = modules.filter((elem, i) => elem !== iter);
     }
 
     for (const iter of links) {
         if (iter.type == "output") {
             if (graph.getCell("!" + iter.name)) {
-                links = links.filter((elem, i) => elem !== iter);
+                links = links.filter((elem) => elem !== iter);
             }
         }
         else if (iter.type == "input") {
             if (graph.getCell("?" + iter.name)) {
-                links = links.filter((elem, i) => elem !== iter);
+                links = links.filter((elem) => elem !== iter);
             }
         }
     }

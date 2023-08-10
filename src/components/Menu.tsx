@@ -30,13 +30,13 @@ function Menu() {
      * dans l'editeur (code et model Display)
      */
     async function load_fichier() {
-        let select = await open({
+        const select = await open({
             defaultPath: "./simulation",
             multiple: false,
             filters: [{ name: 'DNL Files', extensions: ['dnl', 'DNL'] }]
         });
         if (select) {
-            let choice: string = String(select);
+            const choice: string = String(select);
             refresh(choice);
         }
     }
@@ -44,12 +44,14 @@ function Menu() {
     /**
      * créer un nouveau fichier et le charge
      */
-    async function new_fichier() {
+    function new_fichier() {
         const res: string | null = prompt('nom du fichier:');
         if (res) {
-            const filepath: string = await invoke('new_file', { filename: res });
-            let code: string = await readTextFile(filepath);
-            refresh(code);
+            invoke('new_file', { filename: res }).then(async result => {
+                //@ts-ignore
+                const filepath: string = result;
+                refresh(filepath);
+            });
         }
     }
 
