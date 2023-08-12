@@ -18,33 +18,6 @@ fn set_main_window(window: tauri::Window) {
     *MAIN_WINDOW.lock().unwrap() = Some(window);
 }
 
-/*
-gestion des erreur python
-use pyo3::prelude::*;
-use serde::{Serialize, Serializer};
-use tauri::{command::private::ResultKind}
-
-#[derive(Debug)]
-struct MyError(String);
-
-impl From<PyErr> for MyError {
-    fn from(error: PyErr) -> Self {
-        MyError(format!("{:?}", error))
-    }
-}
-
-impl ResultKind for MyError {}
-
-impl Serialize for MyError {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(&self.0)
-    }
-}
-
-*/
 
 /*fonction de copy des fichier je l'appelle pour copier les fichiers recuperés par le bouton import du coté front
 pour les avoir dans mon dossier simulation pour que l'utilisateur puisse se créer une biblioteque*/

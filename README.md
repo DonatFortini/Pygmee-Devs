@@ -2,13 +2,17 @@
 
 <p align="center"><img src="./src/assets/logo_pygmee.png" width="500" height="250"></p>
 
-Le but du projet est de créer une application simplifiant la simulation , de lui donner un aspect graphique et textuel pour simplifier la tache a toute personne voulant s'exercer .
+Le but du projet est de créer une application simplifiant la simulation, de lui donner un aspect graphique et textuel pour simplifier la tache à toute personne voulant s'exercer.
+
 
 ## description du projet
 
-Permet de faciliter la simulation. L’utilisateur peut importer ou creer des modele puis il peut les modifier et visualiser en fonction de divers paramètres.
 
-La principale caracteristique de l'app est sa capacité a interagir graphiquement pour generer des modeles et des parametre les concernant.
+Permet de faciliter la simulation. L’utilisateur peut importer ou créer des modèles puis il peut les modifier et visualiser en fonction de divers paramètres.
+
+
+La principale caractéristique de l'app est sa capacité à interagir graphiquement pour générer des modèles et des paramètres les concernant.
+
 
 Permet à la fin de générer un fichier .amd ou python utilisable directement sur DEVSimPy.
 
