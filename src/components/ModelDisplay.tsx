@@ -1,7 +1,7 @@
 import { readTextFile } from '@tauri-apps/api/fs';
 import { WebviewWindow } from '@tauri-apps/api/window';
 import * as joint from 'jointjs';
-import { parseCodeToGraph } from '../script/graphGenerator';
+import { delElement, parseCodeToGraph } from '../script/graphGenerator';
 
 //decommenter en build
 /*
@@ -77,14 +77,13 @@ async function initModelDisplay(filepath: string) {
             );
             paper.on('cell:contextmenu', (obj: joint.dia.CellView, evt: any, x: number, y: number) => {
                 evt.preventDefault();
-                console.log(obj);
 
                 const linkContext: ContextMenuItem[] = [
                     {
                         label: 'Suprimer le lien',
                         action: () => {
                             // @ts-ignore 
-                            del_link(obj.model.id);
+                            delElement(obj.model.id);
                         }
                     }
                 ];
@@ -101,7 +100,7 @@ async function initModelDisplay(filepath: string) {
                         label: 'Supprimer le module',
                         action: () => {
                             // @ts-ignore 
-                            del_modl(obj.model.id);
+                            delElement(obj.model.id);
                         }
                     }
                 ];
@@ -136,12 +135,6 @@ async function initModelDisplay(filepath: string) {
         webview = createWebview(`./src/html/form_link.html?args=${args}`, "Ajout_lien");
     }
 
-    function del_link(id: string) {
-    }
-
-    function del_modl(id: string) {
-        //TODO implementer pour le futur
-    }
 
     function add_modl() {
         webview = createWebview("./src/html/form_modl.html", "Ajout_module");

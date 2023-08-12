@@ -44,16 +44,17 @@ window.verifLink = (type: string, name: string, source: string, target: string) 
 window.verifMod = (name: string, time: number) => {
   if (Graph.getCell(name)) alert("module déja existant");
   else {
-    const textToAppend: string = (time == -1) ? `passivate in ${name}!` : `hold in ${name} for time ${time}`;
+    let textToAppend: string = (time == -1) ? `passivate in ${name}!` : `hold in ${name} for time ${time}`;
     const tmp: number = (time == -1) ? Infinity : time;
-    appendTextToEditor(editor, textToAppend);
     const m = module_factory(name, tmp, { x: 10, y: 10 })
     if (Graph.getCells().length != 0) Graph.addCell(m);
     else {
       const startmod = start(m);
       m.embed(startmod);
       Graph.addCells([startmod, m])
+      textToAppend="to start,"+textToAppend;
     }
+    appendTextToEditor(editor, textToAppend);
 
   }
 }

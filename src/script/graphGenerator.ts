@@ -1,7 +1,9 @@
+import { editor } from '../components/CodeDisplay';
+import { Graph } from '../components/ModelDisplay';
 import { module_factory, link_factory, start } from './graph';
 import * as joint from 'jointjs';
 
-export { parseCodeToGraph, code_to_parse, updateGraph }
+export { parseCodeToGraph, code_to_parse, updateGraph, delElement }
 
 interface Module {
     name: string
@@ -148,23 +150,41 @@ function updateGraph(uparray: ListeObjets, graph: joint.dia.Graph): ListeObjets 
     var links: Link[] = uparray.links;
 
     for (const iter of modules) {
-        if (graph.getCell(iter.name)) modules = modules.filter((elem, i) => elem !== iter);
+        if (graph.getCell(iter.name)) modules = modules.filter((elem) => elem !== iter);
     }
 
     for (const iter of links) {
-        if (iter.type == "output") {
-            if (graph.getCell("!" + iter.name)) {
-                links = links.filter((elem) => elem !== iter);
-            }
-        }
-        else if (iter.type == "input") {
-            if (graph.getCell("?" + iter.name)) {
-                links = links.filter((elem) => elem !== iter);
-            }
+        const prefix: string = (iter.type == "output") ? "!" : "?";
+        if (graph.getCell(prefix + iter.name)) {
+            links = links.filter((elem) => elem !== iter);
         }
     }
 
     const newListe: ListeObjets = { modules, links };
 
     return newListe;
+}
+
+
+function filterElement(code: string, element: string) {
+    const codeArray: string[] = code.split('\n');
+    let modified: string = "";
+    element = (element.match(/[?!]/)) ? element.split(/[?!]/)[1] : element;
+    for (const iter of codeArray) {
+        if (!iter.includes(element) && !iter.includes(element + "!")) modified += iter + "\n";
+    }
+    return modified;
+}
+
+function validModule(id: string) {
+    
+}
+
+function validLink(id: string) { }
+
+function delElement(id: string) {
+    const code: string = editor.getValue();
+    const modified: string = filterElement(code, id);
+    Graph.removeCells([Graph.getCell(id)]);
+    editor.setValue(modified);
 }
