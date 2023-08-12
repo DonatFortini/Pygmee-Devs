@@ -176,11 +176,13 @@ function filterElement(code: string, element: string) {
     return modified;
 }
 
-function validModule(id: string) {
+function validModule(id: string, code: string) {
+    const alreadyExist:boolean=(Graph.getCell(id))?true:false;
+    const modulesRegex = /hold in (.+?) for time (\d+)|passivate in (\w+)/g;
     
 }
 
-function validLink(id: string) { }
+function validLink(id: string, code: string) { }
 
 function delElement(id: string) {
     const code: string = editor.getValue();

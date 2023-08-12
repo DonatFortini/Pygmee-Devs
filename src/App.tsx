@@ -1,6 +1,8 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { confirm } from '@tauri-apps/api/dialog';
-import { listen, emit } from '@tauri-apps/api/event'
+import { listen, emit, TauriEvent } from '@tauri-apps/api/event';
+import { window as tauriWindow } from "@tauri-apps/api";
+import { appWindow } from "@tauri-apps/api/window";
 
 import { Header } from "./components/Header";
 import { ExportButton } from "./components/ExportButton";
@@ -22,10 +24,17 @@ import burg from "./assets/vertical.svg";
 
 
 
+
 /**variable globales c'est pas bien mais bon on fait comme on peut*/
 var curent_file: string = "";
 
-
+tauriWindow.getCurrent().listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async () => {
+  const winList=tauriWindow.getAll();
+  for(const win of winList){
+    if(await win.title()!="main") win.close();
+  }
+  await appWindow.close();
+})
 
 /**fonction global appelé par le back-end qui permet de crée des liens depuis le graphique  */
 window.verifLink = (type: string, name: string, source: string, target: string) => {
@@ -52,7 +61,7 @@ window.verifMod = (name: string, time: number) => {
       const startmod = start(m);
       m.embed(startmod);
       Graph.addCells([startmod, m])
-      textToAppend="to start,"+textToAppend;
+      textToAppend = "to start," + textToAppend;
     }
     appendTextToEditor(editor, textToAppend);
 
