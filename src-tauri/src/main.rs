@@ -111,19 +111,19 @@ fn setcache(label: String, content: String) {
     main_window.eval(&eval_string).unwrap();
 }
 
-/*
+
 //transcript the dnl code into python advance is the content store in the cache
 #[tauri::command]
-fn transcript(filename: String, advance_content: String)-> Result<(), xdg_user::Error>{
+fn transcript(filename: String, advance_content: String){
     //create the file in the dowload
-    let path = xdg_user::UserDirs::new()?;
+    let path = xdg_user::UserDirs::new().unwrap();
     let fpath=path.downloads().unwrap().join(filename+".py");
+    println!("{:?}",fpath);
     let _ = fs::File::create(&fpath);
     //transpile the dnl into python code
 
-    Ok(())
 }
-*/
+
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
@@ -132,7 +132,7 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            copy_files, save, new_file, add_link, add_mod, setcache, getcache
+            copy_files, save, new_file, add_link, add_mod, setcache, getcache ,transcript
         ]) //gestion de l'invoke
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

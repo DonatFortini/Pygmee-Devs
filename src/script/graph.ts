@@ -45,7 +45,9 @@ function link_factory(rect1: joint.shapes.basic.Rect, rect2: joint.shapes.basic.
         labels: [
             { position: 0.5, attrs: { text: { text: labelText } } }
         ],
-        code: {text:""},
+        attrs:{
+            code: {text:""},
+        },
         id:labelText
     });
 

@@ -176,13 +176,17 @@ function filterElement(code: string, element: string) {
     return modified;
 }
 
-function validModule(id: string, code: string) {
-    const alreadyExist:boolean=(Graph.getCell(id))?true:false;
-    const modulesRegex = /hold in (.+?) for time (\d+)|passivate in (\w+)/g;
-    
+function validModule(id: string, code: string): boolean {
+    const alreadyExist: boolean = (Graph.getCell(id)) ? true : false;
+    const module1 = `hold in ${id} for time `;
+    const module2 = `passivate in ${id}`;
+    if (!alreadyExist && (code.includes(module1) || code.includes(module2))) return true;
+    return false;
 }
 
-function validLink(id: string, code: string) { }
+function validLink(id: string, code: string) {
+    const alreadyExist: boolean = (Graph.getCell(id)) ? true : false;
+}
 
 function delElement(id: string) {
     const code: string = editor.getValue();

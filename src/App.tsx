@@ -6,7 +6,7 @@ import { appWindow } from "@tauri-apps/api/window";
 
 import { Header } from "./components/Header";
 import { ExportButton } from "./components/ExportButton";
-import { Menu } from "./components/Menu";
+import { Menu, curent_file } from "./components/Menu";
 import { ModelDisplay } from "./components/ModelDisplay";
 import { CodeDisplay } from "./components/CodeDisplay";
 
@@ -23,10 +23,6 @@ import "./public/App.css";
 import burg from "./assets/vertical.svg";
 
 
-
-
-/**variable globales c'est pas bien mais bon on fait comme on peut*/
-var curent_file: string = "";
 
 tauriWindow.getCurrent().listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async () => {
   const winList=tauriWindow.getAll();

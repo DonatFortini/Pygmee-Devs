@@ -11,7 +11,7 @@ import '../html/code.html' ;
 */
 import '../public/ContextMenu.css';
 
-export { initModelDisplay, Graph }
+export { initModelDisplay, Graph ,getAdvanceContent}
 var Graph: joint.dia.Graph;
 
 interface ContextMenuItem {
@@ -160,6 +160,16 @@ function createWebview(url: string, titre: string) {
 }
 
 
+function getAdvanceContent():string{
+    let content:string="";
+    let premier:boolean=true;
+    for(const cell of Graph.getCells()){
+        if(!premier) content+=`##${cell.id}##\n`+cell.attr().code.text+"\n";
+        premier=false;
+    }
+    return content;
+}
+
 function ModelDisplay() {
     return (
         <div id="modelDisplay" className="modelDisplay" ></div>
@@ -167,5 +177,7 @@ function ModelDisplay() {
 }
 
 export { ModelDisplay }
+
+
 
 

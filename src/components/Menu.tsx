@@ -1,12 +1,13 @@
 import { open } from "@tauri-apps/api/dialog";
-import { readTextFile } from "@tauri-apps/api/fs";
 import { invoke } from "@tauri-apps/api/tauri";
 import { initModelDisplay } from "./ModelDisplay";
 import { initCodeDisplay } from "./CodeDisplay";
 
+export {curent_file}
+var curent_file: string = "";
 function Menu() {
 
-    var curent_file: string = "";
+    
 
     /**
      * ajoute le nom du fichier en cours au label
@@ -17,6 +18,8 @@ function Menu() {
         const name = choice.split('/').pop();
         if (name) document.getElementById('label')!.innerText = name;
     }
+
+    
 
     function refresh(filepath: string) {
         updateLabel(filepath);
