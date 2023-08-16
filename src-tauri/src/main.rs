@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use lazy_static::lazy_static;
+use serde::Deserialize;
 use snailquote::unescape;
 use std::{fs, io::Write, path::Path, sync::Mutex};
 use tauri::Manager;
@@ -111,6 +112,10 @@ fn setcache(label: String, content: String) {
     main_window.eval(&eval_string).unwrap();
 }
 
+#[derive(Debug, Deserialize)]
+struct CellContent {
+    content: String,
+}
 
 //transcript the dnl code into python advance is the content store in the cache
 #[tauri::command]
@@ -118,9 +123,16 @@ fn transcript(filename: String, advance_content: String){
     //create the file in the dowload
     let path = xdg_user::UserDirs::new().unwrap();
     let fpath=path.downloads().unwrap().join(filename+".py");
-    println!("{:?}",fpath);
     let _ = fs::File::create(&fpath);
     //transpile the dnl into python code
+    let content_map: std::collections::HashMap<String, CellContent> =
+        serde_json::from_str(&advance_content).expect("Failed to parse JSON");
+
+    // Access the deserialized data
+    for (cell_id, cell_content) in content_map {
+        println!("Cell ID: {}", cell_id);
+        println!("Content: {}", cell_content.content);
+    }
 
 }
 

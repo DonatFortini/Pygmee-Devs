@@ -160,14 +160,16 @@ function createWebview(url: string, titre: string) {
 }
 
 
-function getAdvanceContent():string{
-    let content:string="";
-    let premier:boolean=true;
-    for(const cell of Graph.getCells()){
-        if(!premier) content+=`##${cell.id}##\n`+cell.attr().code.text+"\n";
-        premier=false;
+function getAdvanceContent(): string {
+    const contentObject: Record<string, { content: string }> = {};
+
+    for (const cell of Graph.getCells().slice(1)) {
+        const cellId = cell.id;
+        const cellContent = cell.attr().code.text;
+        contentObject[cellId] = { content: cellContent };
     }
-    return content;
+
+    return JSON.stringify(contentObject, null, 2);
 }
 
 function ModelDisplay() {
