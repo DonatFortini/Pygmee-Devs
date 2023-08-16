@@ -5,8 +5,8 @@ import { window as tauriWindow } from "@tauri-apps/api";
 import { appWindow } from "@tauri-apps/api/window";
 
 import { Header } from "./components/Header";
-import { ExportButton } from "./components/ExportButton";
-import { Menu, curent_file } from "./components/Menu";
+import { MenuTop, curent_file } from "./components/MenuTop";
+import { MenuBot } from "./components/MenuBot";
 import { ModelDisplay } from "./components/ModelDisplay";
 import { CodeDisplay } from "./components/CodeDisplay";
 
@@ -20,14 +20,15 @@ import { Graph } from "./components/ModelDisplay";
 import { editor } from "./components/CodeDisplay";
 
 import "./public/App.css";
-import burg from "./assets/vertical.svg";
+import fold from "./assets/fold.svg";
+import saveIcon from "./assets/save.svg";
 
 
 
 tauriWindow.getCurrent().listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async () => {
-  const winList=tauriWindow.getAll();
-  for(const win of winList){
-    if(await win.title()!="main") win.close();
+  const winList = tauriWindow.getAll();
+  for (const win of winList) {
+    if (await win.title() != "main") win.close();
   }
   await appWindow.close();
 })
@@ -104,17 +105,19 @@ function App() {
 
   function fullScreen() {
     document.getElementById('col')!.style.display = 'none';
-    document.getElementById('burgH')!.style.display = 'inherit';
+    document.getElementById('unfold')!.style.display = 'inherit';
   }
 
   return (
     <div style={{ display: 'flex', height: '100vh', }}>
       <div className="column" id="col">
-        <img src={burg} className="burgV" id="burgV" onClick={fullScreen} />
-        <div></div>
-        <Menu />
-        <ExportButton />
-        <div></div>
+        <img src={fold} className="fold" id="fold" onClick={fullScreen} />
+        <div className="blank"></div>
+        <MenuTop />
+        <div className="blank"></div>
+        <MenuBot />
+        <div className="blank"></div>
+        <img src={saveIcon} className="save" id="save" onClick={SaveDoc} />
       </div>
       <div className="main">
         <Header />

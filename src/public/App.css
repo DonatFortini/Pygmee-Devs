@@ -1,18 +1,20 @@
-button{
-  background-color:#DBC2CF;
+button {
+  background-color: #DBC2CF;
+  align-self: center;
+  width: 90%;
+  height: 60%;
+  margin-bottom: 10px;
+  border-radius: 5px;
 }
 
 .input {
   border: solid black 2px;
 }
 
-.label{
+.label {
   color: #DBC2CF;
-  margin-right: 5px;
-  background-color: #2E4756;
-  position: absolute;
-  right: 10%;
-  top: 2.5%;
+  align-self: center;
+  font-size: 1.5rem;
 }
 
 .menu {
@@ -20,12 +22,8 @@ button{
   flex-direction: column;
 }
 
-.export {
-  height: 5rem;
-}
-
 .header {
-  height: 7%;
+  height: 10%;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -33,55 +31,50 @@ button{
   background-color: #1B3542;
 }
 
-.logo{
+.logo {
   width: 5.5rem;
   position: absolute;
   left: 12%;
 }
 
-#title{
-  position: absolute;
-}
-
-.mod,.del_mod,.link,.del_link{
+.mod,
+.del_mod,
+.link,
+.del_link {
   height: 100%;
   width: 100%;
   border: black solid 1px;
 }
 
+.codeDisplay,
+.modelDisplay {
+  height: 90%;
+}
 
-
-.codeDisplay{
-  height: 70%;
+.codeDisplay {
   width: 25%;
-  background-color: #9FA2B2;
 }
 
-.modelDisplay{
-  height: 70%;
-  width:60%;
-  background-color:#9FA2B2;
+.modelDisplay {
+  width: 65%;
 }
 
-
-
-.column{
+.column {
   width: 10%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   border-right: solid white 2px;
-  background-color:#1B3542;
+  background-color: #1B3542;
 }
 
-.main{
+.main {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
 }
 
-.display{
+.display {
   flex: 1 1 auto;
   display: flex;
   background-color: #2E4756;
@@ -90,23 +83,31 @@ button{
   align-items: center;
 }
 
-.burgV{
-  width: 70px;
-  height: 70px;
-  margin-left: 10%;
+.unfold {
+  display: none;
 }
 
-
-.burgH{
-  width: 60px;
-  height: 60px;
-  display: none;
+.unfold,
+.fold {
+  width: 2.5rem;
   position: absolute;
   left: 1%;
+  top: 1.5%
 }
 
-#import{
-  position: absolute;
-  right: 2%;
-  top: 2%;
+.save {
+  width: 3rem;
+  align-self: center;
+}
+
+.save:hover,
+.fold:hover,
+.unfold:hover,
+button:hover {
+  background-color: #9FA2B2;
+  box-shadow: 0 0 10px #DBC2CF;
+}
+
+.blank {
+  height: 20%;
 }

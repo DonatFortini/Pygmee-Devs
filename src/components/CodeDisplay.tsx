@@ -4,9 +4,12 @@ import { link_factory, module_factory } from '../script/graph';
 import { createMonacoEditor } from '../script/ide';
 import { Graph } from './ModelDisplay';
 import * as monaco from 'monaco-editor';
+import expand from '../assets/expand.svg';
 
 export { initCodeDisplay, editor }
+
 var editor: monaco.editor.IStandaloneCodeEditor;
+
 /**
  * lit le contenu du fichier passer en parametre et initialise un editeur de texte avec le contenu
  * 

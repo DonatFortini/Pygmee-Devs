@@ -5,9 +5,8 @@ import { initCodeDisplay } from "./CodeDisplay";
 
 export {curent_file}
 var curent_file: string = "";
-function Menu() {
 
-    
+function MenuTop() {
 
     /**
      * ajoute le nom du fichier en cours au label
@@ -66,4 +65,4 @@ function Menu() {
     );
 }
 
-export { Menu }
+export { MenuTop }

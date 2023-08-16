@@ -11,7 +11,7 @@ import '../html/code.html' ;
 */
 import '../public/ContextMenu.css';
 
-export { initModelDisplay, Graph ,getAdvanceContent}
+export { initModelDisplay, Graph, getAdvanceContent }
 var Graph: joint.dia.Graph;
 
 interface ContextMenuItem {
@@ -59,12 +59,15 @@ async function initModelDisplay(filepath: string) {
     readTextFile(filepath)
         .then(data => {
             Graph = parseCodeToGraph(data);
+            const zone = document.getElementById("modelDisplay");
             const paper = new joint.dia.Paper({
-                el: document.getElementById("modelDisplay"),
+                el: zone,
                 model: Graph,
-                height: '70%',
-                width: '60%'
+                height: '90%',
+                width: '65%'
             });
+
+            zone!.style.backgroundColor = '#9FA2B2';
 
             interface cellView {
                 model: { id: string }
